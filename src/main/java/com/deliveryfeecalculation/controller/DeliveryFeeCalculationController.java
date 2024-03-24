@@ -37,7 +37,7 @@ public class DeliveryFeeCalculationController {
      */
     @GetMapping()
     public ResponseEntity<?> getDeliveryFee(@RequestBody final Request request) {
-        if (request == null)
+        if (request == null || request.getCity()==null || request.getVehicleType()==null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please fill all fields: city, vehicleType");
 
         final Response response = deliveryFeeCalculationService
