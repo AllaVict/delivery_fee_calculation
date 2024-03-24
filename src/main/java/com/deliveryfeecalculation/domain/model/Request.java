@@ -1,9 +1,5 @@
 package com.deliveryfeecalculation.domain.model;
 
-
-import com.deliveryfeecalculation.domain.enums.City;
-import com.deliveryfeecalculation.domain.enums.VehicleType;
-
 import java.util.Objects;
 
 public class Request {
