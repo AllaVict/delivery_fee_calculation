@@ -1,0 +1,3 @@
+DELETE FROM base_fees WHERE city IN ('TALLINN');
+
+
