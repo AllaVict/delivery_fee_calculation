@@ -1,6 +1,5 @@
 package com.deliveryfeecalculation.service.impl;
 
-import com.deliveryfeecalculation.domain.enums.WeatherPhenomenon;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import org.junit.jupiter.api.Test;

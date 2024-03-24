@@ -10,7 +10,7 @@ public class BaseFeeFactory {
 
     private static final long BASE_FEE_ID = 101L;
 
-    private static final Double BASE_FEE = 3.00;
+    private static final Double BASE_FEE = 0.00;
 
     private static final LocalDateTime CREATED_DATE = LocalDateTime.of(2024, 03, 23, 20, 24);
 
