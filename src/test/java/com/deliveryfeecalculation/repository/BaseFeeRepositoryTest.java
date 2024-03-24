@@ -79,6 +79,7 @@ class BaseFeeRepositoryTest {
             assertThat(foundBaseFee).isEmpty();
         }
     }
+
     @Nested
     @DisplayName("When Find All BaseFee")
     class FindALlBaseFeeTests {
