@@ -7,6 +7,7 @@ import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import com.deliveryfeecalculation.repository.BaseFeeRepository;
 import com.deliveryfeecalculation.repository.WeatherConditionRepository;
 import com.deliveryfeecalculation.service.ExtraFeeCalculationService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +25,7 @@ import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FO
 import static com.deliveryfeecalculation.domain.enums.City.TALLINN;
 import static com.deliveryfeecalculation.domain.enums.VehicleType.BIKE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -88,5 +88,14 @@ class DeliveryFeeCalculationServiceImplTest {
         assertEquals(response, result);
         assertThat(result.getFee()).isEqualTo(response.getFee());
      }
+
+    @Test
+    void testExtraFeeCalculation_shouldThrowException() {
+
+        assertThrows(EntityNotFoundException.class,
+                () -> deliveryFeeCalculationService.deliveryFeeCalculate(null, BIKE));
+        assertThrows(EntityNotFoundException.class,
+                () -> deliveryFeeCalculationService.deliveryFeeCalculate(TALLINN, null));
+    }
 
 }
