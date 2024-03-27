@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,12 +28,20 @@ class WeatherConditionRepositoryTest {
     @Autowired
     private WeatherConditionRepository weatherConditionRepository;
 
+    private WeatherCondition weatherConditionOne;
+
+    private WeatherCondition weatherConditionTwo;
     private static final long WEATHER_CONDITION_ID = 101L;
-    private WeatherCondition weatherCondition;
+
+
+    private static final LocalDateTime OBSERVATION_TIME_2024 = LocalDateTime.of(2024, 3, 23, 20, 24);
+
+    private static final LocalDateTime OBSERVATION_TIME_2020 = LocalDateTime.of(2020, 3, 23, 20, 24);
 
     @BeforeEach
     public void setUp() {
-        weatherCondition = WeatherConditionFactory.createWeatherCondition();
+        weatherConditionOne = WeatherConditionFactory.createWeatherConditionWithTime(OBSERVATION_TIME_2024);
+        weatherConditionTwo = WeatherConditionFactory.createWeatherConditionWithTime(OBSERVATION_TIME_2020);
     }
 
     @Nested
@@ -40,7 +50,7 @@ class WeatherConditionRepositoryTest {
 
         @Test
         void testFindWeatherConditionById_shouldReturnExistingWeatherConditionWithGivenId() {
-            WeatherCondition existingWeatherCondition = weatherConditionRepository.save(weatherCondition);
+            WeatherCondition existingWeatherCondition = weatherConditionRepository.save(weatherConditionOne);
             Optional<WeatherCondition> foundWeatherCondition = weatherConditionRepository.findById(existingWeatherCondition.getId());
             assertEquals(existingWeatherCondition.getId(), foundWeatherCondition.get().getId());
             assertTrue(foundWeatherCondition.isPresent());
@@ -62,13 +72,13 @@ class WeatherConditionRepositoryTest {
 
         @Test
         void testSaveWeatherCondition_shouldReturnWeatherConditionSuccessfully() {
-            WeatherCondition savedWeatherCondition = weatherConditionRepository.save(weatherCondition);
+            WeatherCondition savedWeatherCondition = weatherConditionRepository.save(weatherConditionOne);
 
             assertNotNull(savedWeatherCondition);
             assertNotNull(savedWeatherCondition);
             assertThat(savedWeatherCondition.getId()).isNotNull();
-            assertThat(savedWeatherCondition.getWeatherPhenomenon()).isEqualTo(weatherCondition.getWeatherPhenomenon());
-            assertEquals(weatherCondition.getWindSpeed(), savedWeatherCondition.getWindSpeed());
+            assertThat(savedWeatherCondition.getWeatherPhenomenon()).isEqualTo(weatherConditionOne.getWeatherPhenomenon());
+            assertEquals(weatherConditionOne.getWindSpeed(), savedWeatherCondition.getWindSpeed());
         }
 
         @Test
@@ -86,7 +96,7 @@ class WeatherConditionRepositoryTest {
         @Test
         void testFindAllWeatherCondition_shouldReturnWeatherConditionListSuccessfully() {
             weatherConditionRepository.deleteAll();
-            weatherConditionRepository.save(weatherCondition);
+            weatherConditionRepository.save(weatherConditionOne);
             List<WeatherCondition> weatherConditionList = weatherConditionRepository.findAll();
 
             assertEquals(weatherConditionList.size(), 1);
@@ -104,12 +114,26 @@ class WeatherConditionRepositoryTest {
     }
 
     @Nested
+    @DisplayName("When Delete WeatherCondition By Id")
+    class DeleteWeatherConditionByIdTests {
+        @Test
+        void testDeleteWeatherConditionById_shouldDeleteWeatherConditionByIdSuccessfully() {
+            WeatherCondition baseFeeForDelete = weatherConditionRepository.save(weatherConditionOne);
+
+            weatherConditionRepository.deleteById(baseFeeForDelete.getId());
+            Optional<WeatherCondition> deletedWeatherCondition = weatherConditionRepository.findById(baseFeeForDelete.getId());
+            assertFalse(deletedWeatherCondition.isPresent());
+            assertThat(deletedWeatherCondition).isEmpty();
+        }
+    }
+
+    @Nested
     @DisplayName("When find WeatherCondition By Station Name")
     class FindWeatherConditionByStationName {
         @Test
         void testFindUWeatherConditionByStationName_shouldReturnWeatherConditionSuccessfully() {
             weatherConditionRepository.deleteAll();
-            weatherConditionRepository.save(weatherCondition);
+            weatherConditionRepository.save(weatherConditionOne);
             List<WeatherCondition> allByStationName = weatherConditionRepository.findAllByStationName(TALLINN);
 
             assertFalse(allByStationName.isEmpty());
@@ -128,17 +152,29 @@ class WeatherConditionRepositoryTest {
     }
 
     @Nested
-    @DisplayName("When Delete WeatherCondition By Id")
-    class DeleteWeatherConditionByIdTests {
+    @DisplayName("When find WeatherCondition By Station Name")
+    class FindFirstAfterFindAllByStationName {
         @Test
-        void testDeleteWeatherConditionById_shouldDeleteWeatherConditionByIdSuccessfully() {
-            WeatherCondition baseFeeForDelete = weatherConditionRepository.save(weatherCondition);
+        void testFindFirstAfterFindAllByStationName_shouldReturnWeatherConditionSuccessfully() {
+            weatherConditionRepository.deleteAll();
+            weatherConditionRepository.save(weatherConditionOne);
+            weatherConditionRepository.save(weatherConditionTwo);
+            Optional<WeatherCondition> allByStationName = weatherConditionRepository
+                    .findFirstAfterFindAllByStationName(TALLINN, Sort.by(Sort.Direction.DESC, "observationTime"));
 
-            weatherConditionRepository.deleteById(baseFeeForDelete.getId());
-            Optional<WeatherCondition> deletedWeatherCondition = weatherConditionRepository.findById(baseFeeForDelete.getId());
-            assertFalse(deletedWeatherCondition.isPresent());
-            assertThat(deletedWeatherCondition).isEmpty();
+            assertFalse(allByStationName.isEmpty());
+            assertEquals(TALLINN, allByStationName.get().getStationName());
         }
-    }
 
+        @Test
+        void testFindFirstAfterFindAllByStationName_shouldReturnNoWeatherCondition() {
+            weatherConditionRepository.deleteAll();
+            Optional<WeatherCondition> allByStationName = weatherConditionRepository
+                    .findFirstAfterFindAllByStationName(TALLINN, Sort.by(Sort.Direction.DESC, "observationTime"));
+
+            assertTrue(allByStationName.isEmpty());
+            assertThat(allByStationName).isEmpty();
+        }
+
+    }
 }
