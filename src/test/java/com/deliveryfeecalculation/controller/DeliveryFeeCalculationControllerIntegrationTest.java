@@ -20,7 +20,6 @@ import static com.deliveryfeecalculation.factory.RequestFactory.createRequest;
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.FEE_URL;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

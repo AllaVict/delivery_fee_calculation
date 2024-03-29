@@ -8,7 +8,6 @@ import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import com.deliveryfeecalculation.repository.BaseFeeRepository;
 import com.deliveryfeecalculation.repository.WeatherConditionRepository;
 import com.deliveryfeecalculation.service.ExtraFeeCalculationService;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
