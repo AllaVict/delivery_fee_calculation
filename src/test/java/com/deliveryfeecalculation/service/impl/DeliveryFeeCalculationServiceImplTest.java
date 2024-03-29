@@ -1,6 +1,7 @@
 package com.deliveryfeecalculation.service.impl;
 
-import com.deliveryfeecalculation.config.WeatherConditionFactory;
+import com.deliveryfeecalculation.exception.ResourceNotFoundException;
+import com.deliveryfeecalculation.factory.WeatherConditionFactory;
 import com.deliveryfeecalculation.domain.model.BaseFee;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
@@ -18,8 +19,8 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Optional;
 
-import static com.deliveryfeecalculation.config.BaseFeeFactory.createBaseFee;
-import static com.deliveryfeecalculation.config.WeatherConditionFactory.createWeatherConditionWithHail;
+import static com.deliveryfeecalculation.factory.BaseFeeFactory.createBaseFee;
+import static com.deliveryfeecalculation.factory.WeatherConditionFactory.createWeatherConditionWithHail;
 import static com.deliveryfeecalculation.constants.Constants.Messages.DELIVERY_FEE_CALCULATION;
 import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FORBIDDEN;
 import static com.deliveryfeecalculation.domain.enums.City.TALLINN;
@@ -92,9 +93,9 @@ class DeliveryFeeCalculationServiceImplTest {
     @Test
     void testExtraFeeCalculation_shouldThrowException() {
 
-        assertThrows(EntityNotFoundException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> deliveryFeeCalculationService.deliveryFeeCalculate(null, BIKE));
-        assertThrows(EntityNotFoundException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> deliveryFeeCalculationService.deliveryFeeCalculate(TALLINN, null));
     }
 

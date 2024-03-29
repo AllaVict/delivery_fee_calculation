@@ -2,26 +2,26 @@ package com.deliveryfeecalculation.constants;
 
 public final class Constants {
 
-	private Constants() {
-	}
-	public static final class Endpoints {
+    private Constants() {
+    }
 
-		public static final String FEE_URL = "/fee";
+    public static final class Endpoints {
 
-		private Endpoints() {
-		}
-	}
-	public static final class Messages {
+        public static final String FEE_URL = "/fee";
 
-		public static final String VEHICLE_FORBIDDEN = "Usage of selected vehicle type is forbidden.";
+        private Endpoints() {
+        }
+    }
 
-		public static final String DELIVERY_FEE_CALCULATION = "Delivery fee calculation: ";
+    public static final class Messages {
 
-		private Messages() {
-		}
-	}
+        public static final String VEHICLE_FORBIDDEN = "Usage of selected vehicle type is forbidden.";
 
+        public static final String DELIVERY_FEE_CALCULATION = "Delivery fee calculation: ";
 
+        private Messages() {
+        }
+    }
 
 
 }

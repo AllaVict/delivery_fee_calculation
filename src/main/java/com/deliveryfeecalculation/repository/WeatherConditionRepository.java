@@ -11,9 +11,11 @@ import java.util.Optional;
 
 /**
  * Spring Data repository for managing {@link WeatherCondition} entities.
+ *
+ * @author Alla Borodina
  */
 @Repository
-public interface WeatherConditionRepository extends JpaRepository<WeatherCondition,Long> {
+public interface WeatherConditionRepository extends JpaRepository<WeatherCondition, Long> {
 
     /**
      * Finds all {@link WeatherCondition} entries for a given station name (city).
@@ -23,6 +25,7 @@ public interface WeatherConditionRepository extends JpaRepository<WeatherConditi
      * @return a list of {@link WeatherCondition} objects matching the given station name
      */
     List<WeatherCondition> findAllByStationName(City stationName);
+
     /**
      * Finds the first {@link WeatherCondition} entry after retrieving all entries for a given city,
      * sorted according to the specified sort order. This method is useful for finding the most recent

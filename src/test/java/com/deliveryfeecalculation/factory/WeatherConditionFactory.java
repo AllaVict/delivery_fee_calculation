@@ -1,17 +1,14 @@
-package com.deliveryfeecalculation.config;
+package com.deliveryfeecalculation.factory;
 
-import com.deliveryfeecalculation.domain.enums.WeatherPhenomenon;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import java.time.LocalDateTime;
 import static com.deliveryfeecalculation.domain.enums.City.TALLINN;
-import static com.deliveryfeecalculation.domain.enums.WeatherPhenomenon.HAIL;
-import static com.deliveryfeecalculation.domain.enums.WeatherPhenomenon.RAIN;
 
 public class WeatherConditionFactory {
     private static final long WEATHER_CONDITION_ID = 101L;
 
-    private static final Integer  AIR_TEMPERATURE= 10;
-    private static final Integer  WIND_SPEED= 10;
+    private static final Double  AIR_TEMPERATURE= 10.00;
+    private static final Double  WIND_SPEED= 10.00;
 
     private static final LocalDateTime OBSERVATION_TIME = LocalDateTime.of(2024, 3, 23, 20, 24);
 
@@ -34,7 +31,7 @@ public class WeatherConditionFactory {
         createdWeatherCondition.setStationName(TALLINN);
         createdWeatherCondition.setAirTemperature(AIR_TEMPERATURE);
         createdWeatherCondition.setWindSpeed(WIND_SPEED);
-        createdWeatherCondition.setWeatherPhenomenon(RAIN);
+        createdWeatherCondition.setWeatherPhenomenon("RAIN");
         createdWeatherCondition.setObservationTime(OBSERVATION_TIME);
         return createdWeatherCondition;
     }
@@ -44,14 +41,14 @@ public class WeatherConditionFactory {
         createdWeatherCondition.setStationName(TALLINN);
         createdWeatherCondition.setAirTemperature(AIR_TEMPERATURE);
         createdWeatherCondition.setWindSpeed(WIND_SPEED);
-        createdWeatherCondition.setWeatherPhenomenon(HAIL);
+        createdWeatherCondition.setWeatherPhenomenon("HAIL");
         createdWeatherCondition.setObservationTime(OBSERVATION_TIME);
         return createdWeatherCondition;
     }
 
-    public static WeatherCondition createWeatherConditionWithParameters(final Integer airTemperature,
-                                                                        final Integer windSpeed,
-                                                                        final WeatherPhenomenon weatherPhenomenon) {
+    public static WeatherCondition createWeatherConditionWithParameters(final Double airTemperature,
+                                                                        final Double windSpeed,
+                                                                        final String weatherPhenomenon) {
         final WeatherCondition createdWeatherCondition = new WeatherCondition();
         createdWeatherCondition.setId(WEATHER_CONDITION_ID);
         createdWeatherCondition.setStationName(TALLINN);

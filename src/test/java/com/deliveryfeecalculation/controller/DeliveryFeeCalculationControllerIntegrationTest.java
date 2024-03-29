@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.deliveryfeecalculation.config.RequestFactory.createRequest;
+import static com.deliveryfeecalculation.factory.RequestFactory.createRequest;
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.FEE_URL;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -79,7 +79,7 @@ class DeliveryFeeCalculationControllerIntegrationTest {
     @Test
     void testDeliveryFeeCalculate_statusCode404WhenInvalidRequested() throws Exception{
 
-        mockMvc.perform(get(FEE_URL+"/invalid")
+        mockMvc.perform(get("/invalid")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())

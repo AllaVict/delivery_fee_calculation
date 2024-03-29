@@ -1,6 +1,6 @@
 package com.deliveryfeecalculation.repository;
 
-import com.deliveryfeecalculation.config.WeatherConditionFactory;
+import com.deliveryfeecalculation.factory.WeatherConditionFactory;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

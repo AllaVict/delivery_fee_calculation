@@ -1,6 +1,6 @@
 package com.deliveryfeecalculation.repository;
 
-import com.deliveryfeecalculation.config.BaseFeeFactory;
+import com.deliveryfeecalculation.factory.BaseFeeFactory;
 import com.deliveryfeecalculation.domain.model.BaseFee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

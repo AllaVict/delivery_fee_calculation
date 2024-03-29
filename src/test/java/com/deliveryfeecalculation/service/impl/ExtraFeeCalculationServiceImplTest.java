@@ -7,13 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.NoSuchElementException;
-
-import static com.deliveryfeecalculation.config.WeatherConditionFactory.*;
+import static com.deliveryfeecalculation.factory.WeatherConditionFactory.*;
 import static com.deliveryfeecalculation.constants.Constants.Messages.DELIVERY_FEE_CALCULATION;
 import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FORBIDDEN;
 import static com.deliveryfeecalculation.domain.enums.VehicleType.BIKE;
-import static com.deliveryfeecalculation.domain.enums.WeatherPhenomenon.SNOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +25,7 @@ class ExtraFeeCalculationServiceImplTest {
 
     @Test
     void testExtraFeeCalculation_ReturnExtraFeeSuccessfully() {
-        weatherCondition = createWeatherConditionWithParameters(-15,15, SNOW);
+        weatherCondition = createWeatherConditionWithParameters(-15.0,15.0, "SNOW");
         response =new Response(DELIVERY_FEE_CALCULATION, 2.5);
 
         Response result = extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE);

@@ -6,5 +6,5 @@ import com.deliveryfeecalculation.domain.model.WeatherCondition;
 
 public interface ExtraFeeCalculationService {
 
-    Response extraFeesCalculate(final WeatherCondition weatherCondition, final VehicleType vehicleType);
+    Response extraFeesCalculate(WeatherCondition weatherCondition, VehicleType vehicleType);
 }
