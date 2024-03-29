@@ -1,7 +1,6 @@
 package com.deliveryfeecalculation.service.impl;
 
 import com.deliveryfeecalculation.domain.enums.VehicleType;
-import com.deliveryfeecalculation.domain.enums.WeatherPhenomenon;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import com.deliveryfeecalculation.service.ExtraFeeCalculationService;
@@ -11,6 +10,11 @@ import org.springframework.stereotype.Service;
 import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FORBIDDEN;
 import static com.deliveryfeecalculation.constants.Constants.Messages.DELIVERY_FEE_CALCULATION;
 
+/**
+ * Service implementation for calculating additional fees for delivery based on various weather conditions and vehicle types.
+ *
+ * @author Alla Borodina
+ */
 @Service
 public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationService {
 
@@ -28,9 +32,9 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
     @Override
     public Response extraFeesCalculate(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
 
-        Response airTemperatureResponse = airTemperatureExtraFeeCalculation(weatherCondition, vehicleType);
-        Response windSpeedResponse = windSpeedExtraFeeCalculation(weatherCondition, vehicleType);
-        Response weatherPhenomenonResponse = weatherPhenomenonExtraFeeCalculation(weatherCondition, vehicleType);
+        final Response airTemperatureResponse = airTemperatureExtraFeeCalculation(weatherCondition, vehicleType);
+        final Response windSpeedResponse = windSpeedExtraFeeCalculation(weatherCondition, vehicleType);
+        final Response weatherPhenomenonResponse = weatherPhenomenonExtraFeeCalculation(weatherCondition, vehicleType);
 
         if (airTemperatureResponse.getMessage().equals(VEHICLE_FORBIDDEN)  || windSpeedResponse.getMessage().equals(VEHICLE_FORBIDDEN)
                 || weatherPhenomenonResponse.getMessage().equals(VEHICLE_FORBIDDEN)) {
@@ -50,7 +54,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
     private Response airTemperatureExtraFeeCalculation(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
 
         if (vehicleType.equals(VehicleType.SCOOTER)  || vehicleType.equals(VehicleType.BIKE)) {
-            Integer airTemperature = weatherCondition.getAirTemperature();
+            Double airTemperature = weatherCondition.getAirTemperature();
             if (airTemperature < -10) {
                 return new Response(DELIVERY_FEE_CALCULATION, 1.0);
             } else if (airTemperature >= -10 && airTemperature <= 0) {
@@ -63,7 +67,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
     private Response windSpeedExtraFeeCalculation(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
 
         if (vehicleType.equals(VehicleType.BIKE)) {
-            Integer windSpeed = weatherCondition.getWindSpeed();
+            Double windSpeed = weatherCondition.getWindSpeed();
             if (windSpeed > 20) {
                 return new Response(VEHICLE_FORBIDDEN, 0.0);
             } else if (windSpeed >= 10 && windSpeed <= 20) {
@@ -75,12 +79,13 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
 
     private Response weatherPhenomenonExtraFeeCalculation(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
         if (vehicleType.equals(VehicleType.SCOOTER)  || vehicleType.equals(VehicleType.BIKE)) {
-            WeatherPhenomenon weatherPhenomenon = weatherCondition.getWeatherPhenomenon();
-            if ("SNOW".equalsIgnoreCase(weatherPhenomenon.name()) || "SLEET".equalsIgnoreCase(weatherPhenomenon.name())) {
+            String weatherPhenomenon = weatherCondition.getWeatherPhenomenon();
+            if ("SNOW".equalsIgnoreCase(weatherPhenomenon) || "SLEET".equalsIgnoreCase(weatherPhenomenon)) {
                 return new Response(DELIVERY_FEE_CALCULATION, 1.0);
-            } else if ("RAIN".equalsIgnoreCase(weatherPhenomenon.name())) {
+            } else if ("RAIN".equalsIgnoreCase(weatherPhenomenon)) {
                 return new Response(DELIVERY_FEE_CALCULATION, 0.5);
-            } else if ("GLAZE".equalsIgnoreCase(weatherPhenomenon.name()) || "HAIL".equalsIgnoreCase(weatherPhenomenon.name()) || "THUNDER".equalsIgnoreCase(weatherPhenomenon.name())) {
+            } else if ("GLAZE".equalsIgnoreCase(weatherPhenomenon) || "HAIL".equalsIgnoreCase(weatherPhenomenon)
+                    || "THUNDER".equalsIgnoreCase(weatherPhenomenon)) {
                 return new Response(VEHICLE_FORBIDDEN, 0.0);
             }
         }

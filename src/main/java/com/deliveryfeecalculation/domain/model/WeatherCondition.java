@@ -1,7 +1,6 @@
 package com.deliveryfeecalculation.domain.model;
 
 import com.deliveryfeecalculation.domain.enums.City;
-import com.deliveryfeecalculation.domain.enums.WeatherPhenomenon;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,22 +18,21 @@ public class WeatherCondition {
     City stationName;
 
     @Column(name = "air_temperature")
-    Integer airTemperature;
+    Double airTemperature;
 
     @Column(name = "wind_speed")
-    Integer windSpeed;
+    Double windSpeed;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "weather_phenomenon")
-    WeatherPhenomenon weatherPhenomenon;
+    String weatherPhenomenon;
 
     @Column(name = "observation_time")
     LocalDateTime observationTime;
 
     public WeatherCondition(final City stationName,
-                            final Integer airTemperature,
-                            final Integer windSpeed,
-                            final WeatherPhenomenon weatherPhenomenon,
+                            final Double airTemperature,
+                            final Double windSpeed,
+                            final String weatherPhenomenon,
                             final LocalDateTime observationTime) {
         this.stationName = stationName;
         this.airTemperature = airTemperature;
@@ -62,27 +60,27 @@ public class WeatherCondition {
         this.stationName = city;
     }
 
-    public Integer getAirTemperature() {
+    public Double getAirTemperature() {
         return airTemperature;
     }
 
-    public void setAirTemperature(Integer airTemperature) {
+    public void setAirTemperature(Double airTemperature) {
         this.airTemperature = airTemperature;
     }
 
-    public Integer getWindSpeed() {
+    public Double getWindSpeed() {
         return windSpeed;
     }
 
-    public void setWindSpeed(Integer windSpeed) {
+    public void setWindSpeed(Double windSpeed) {
         this.windSpeed = windSpeed;
     }
 
-    public WeatherPhenomenon getWeatherPhenomenon() {
+    public String getWeatherPhenomenon() {
         return weatherPhenomenon;
     }
 
-    public void setWeatherPhenomenon(WeatherPhenomenon weatherPhenomenon) {
+    public void setWeatherPhenomenon(String weatherPhenomenon) {
         this.weatherPhenomenon = weatherPhenomenon;
     }
 
