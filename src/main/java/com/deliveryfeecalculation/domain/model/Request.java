@@ -3,8 +3,8 @@ package com.deliveryfeecalculation.domain.model;
 import java.util.Objects;
 
 public class Request {
-    String city;
-    String vehicleType;
+    private String city;
+    private String vehicleType;
 
     public String getCity() {
         return city;

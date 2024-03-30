@@ -1,47 +1,32 @@
-package com.deliveryfeecalculation.domain.model;
+package com.deliveryfeecalculation.domain.dto;
 
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.enums.VehicleType;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "extra_fees")
-public class ExtraFee {
+public class ExtraFeeDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "vehicle_type")
     private VehicleType vehicleType;
 
-    @Column(name = "extra_fee")
     private Double fee;
 
-    @Column(name = "lower_limit")
     private Double lowerLimit;
 
-    @Column(name = "upper_limit")
     private Double upperLimit;
 
-    @Column(name = "weather_phenomenon")
     private String weatherPhenomenon;
 
-    @Column(name = "is_forbidden")
+
     private Boolean isForbidden;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private Status status;
 
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     public Long getId() {
@@ -128,8 +113,8 @@ public class ExtraFee {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ExtraFee extraFee1 = (ExtraFee) o;
-        return Objects.equals(id, extraFee1.id) && Objects.equals(name, extraFee1.name) && vehicleType == extraFee1.vehicleType && Objects.equals(fee, extraFee1.fee) && Objects.equals(lowerLimit, extraFee1.lowerLimit) && Objects.equals(upperLimit, extraFee1.upperLimit) && weatherPhenomenon == extraFee1.weatherPhenomenon && Objects.equals(isForbidden, extraFee1.isForbidden) && status == extraFee1.status && Objects.equals(createdDate, extraFee1.createdDate);
+        ExtraFeeDTO that = (ExtraFeeDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && vehicleType == that.vehicleType && Objects.equals(fee, that.fee) && Objects.equals(lowerLimit, that.lowerLimit) && Objects.equals(upperLimit, that.upperLimit) && Objects.equals(weatherPhenomenon, that.weatherPhenomenon) && Objects.equals(isForbidden, that.isForbidden) && status == that.status && Objects.equals(createdDate, that.createdDate);
     }
 
     @Override
@@ -139,17 +124,17 @@ public class ExtraFee {
 
     @Override
     public String toString() {
-        return "ExtraFee{" +
+        return "ExtraFeeDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", vehicleType=" + vehicleType +
-                ", extraFee=" + fee +
+                ", fee=" + fee +
                 ", lowerLimit=" + lowerLimit +
                 ", upperLimit=" + upperLimit +
-                ", weatherPhenomenon=" + weatherPhenomenon +
+                ", weatherPhenomenon='" + weatherPhenomenon + '\'' +
                 ", isForbidden=" + isForbidden +
                 ", status=" + status +
-                ", createdData=" + createdDate +
+                ", createdDate=" + createdDate +
                 '}';
     }
 }

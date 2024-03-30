@@ -18,21 +18,21 @@ public class BaseFee {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "city")
-    City city;
+    private City city;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")
-    VehicleType vehicleType;
+    private VehicleType vehicleType;
 
     @Column(name = "base_fee")
-    Double fee;
+    private Double fee;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    Status status;
+    private Status status;
 
     @Column(name = "created_date")
-    LocalDateTime createdDate;
+    private LocalDateTime createdDate;
 
     public Long getId() {
         return id;

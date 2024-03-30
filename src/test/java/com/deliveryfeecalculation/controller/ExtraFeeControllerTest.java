@@ -1,5 +1,7 @@
 package com.deliveryfeecalculation.controller;
 
+import com.deliveryfeecalculation.converter.TypeConverter;
+import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
@@ -19,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeList;
-import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeWithData;
+import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -32,20 +33,30 @@ class ExtraFeeControllerTest {
 
     @Mock
     private ExtraFeeRepository extraFeeRepository;
-
+    @Mock
+    private TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter;
+    @Mock
+    private TypeConverter<ExtraFee,ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter;
     @InjectMocks
     private ExtraFeeController extraFeeController;
 
     private static final long EXTRA_FEE_ID = 101L;
 
     private List<ExtraFee> extraFeeList;
+    List<ExtraFeeDTO> extraFeeDTOList;
     private ExtraFee extraFee;
-
+    private ExtraFeeDTO archiveExtraFeeDTO;
+    private ExtraFeeDTO extraFeeDTO;
 
     @BeforeEach
     public void setUp() {
+        extraFeeController= new ExtraFeeController(extraFeeRepository,
+                extraFeeDTOExtraFeeTypeConverter,extraFeeExtraFeeDTOTypeConverter);
         extraFeeList = createExtraFeeList();
         extraFee = createExtraFeeWithData();
+        archiveExtraFeeDTO =createExtraFeeDtoWithData();
+        extraFeeDTO= createExtraFeeDtoWithData();
+        extraFeeDTOList= createExtraFeeDTOList();
     }
     @Nested
     @DisplayName("When Find ExtraFee By Id")
@@ -53,11 +64,11 @@ class ExtraFeeControllerTest {
         @Test
         void testFindExtraFeeById_ShouldReturnExtraFee() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
-
+            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).thenReturn(extraFeeDTO);
             ResponseEntity<?> responseEntity = extraFeeController.findExtraFeeById(EXTRA_FEE_ID);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(extraFee, responseEntity.getBody());
+            assertEquals(extraFeeDTO, responseEntity.getBody());
         }
 
         @Test
@@ -75,11 +86,12 @@ class ExtraFeeControllerTest {
         @Test
         void testFindAllExtraFees_shouldReturnAllExtraFees() {
             when(extraFeeRepository.findAll()).thenReturn(extraFeeList);
+            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList)).thenReturn(extraFeeDTOList);
 
             ResponseEntity<?> responseEntity = extraFeeController.getAllExtraFees();
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(extraFeeList, responseEntity.getBody());
+            assertEquals(extraFeeDTOList, responseEntity.getBody());
         }
 
         @Test
@@ -102,9 +114,10 @@ class ExtraFeeControllerTest {
     class CreateExtraFeeTests {
         @Test
         void testCreateExtraFee_ShouldReturnExtraFee() {
+            when(extraFeeDTOExtraFeeTypeConverter.convert(extraFeeDTO)).thenReturn(extraFee);
             when(extraFeeRepository.save(extraFee)).thenReturn(extraFee);
 
-            ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFee);
+            ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFeeDTO);
 
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
             assertEquals(extraFee, responseEntity.getBody());
@@ -113,8 +126,8 @@ class ExtraFeeControllerTest {
         @Test
         void testCreateExtraFee_InvalidData() {
             extraFee = new ExtraFee();
-
-            ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFee);
+            extraFeeDTO= new ExtraFeeDTO();
+            ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFeeDTO);
 
             assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         }
@@ -126,13 +139,14 @@ class ExtraFeeControllerTest {
         @Test
         void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
-            extraFee.setStatus(Status.ARCHIVE);
+            archiveExtraFeeDTO.setStatus(Status.ARCHIVE);
             when(extraFeeRepository.save(extraFee)).thenReturn(extraFee);
+            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).thenReturn(archiveExtraFeeDTO);
 
             ResponseEntity<?> responseEntity = extraFeeController.archiveExtraFee(EXTRA_FEE_ID);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(extraFee, responseEntity.getBody());
+            assertEquals(archiveExtraFeeDTO, responseEntity.getBody());
         }
 
     }
