@@ -49,14 +49,14 @@ class DeliveryFeeCalculationServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        response =new Response(DELIVERY_FEE_CALCULATION, 5.5);
+        response = new Response(DELIVERY_FEE_CALCULATION, 5.5);
         weatherCondition = WeatherConditionFactory.createWeatherCondition();
         baseFee = createBaseFee();
     }
 
     @Test
     void testDeliveryFeeCalculate_ReturnResponseWithDeliveryFeeSuccessfully() {
-        Sort sort =Sort.by(Sort.Direction.DESC, "observationTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "observationTime");
         when(weatherConditionRepository.findFirstAfterFindAllByStationName(TALLINN, sort))
                 .thenReturn(Optional.of(weatherCondition));
         when(baseFeeRepository.findBaseFeeByCityAndVehicleType(TALLINN, BIKE))
@@ -74,8 +74,8 @@ class DeliveryFeeCalculationServiceImplTest {
     @Test
     void testExtraFeeCalculation_ReturnResponseWithVehicleTypeIsForbidden() {
         weatherCondition = createWeatherConditionWithHail();
-        response =new Response(VEHICLE_FORBIDDEN, 0.0);
-        Sort sort =Sort.by(Sort.Direction.DESC, "observationTime");
+        response = new Response(VEHICLE_FORBIDDEN, 0.0);
+        Sort sort = Sort.by(Sort.Direction.DESC, "observationTime");
         when(weatherConditionRepository.findFirstAfterFindAllByStationName(TALLINN, sort))
                 .thenReturn(Optional.of(weatherCondition));
         when(baseFeeRepository.findBaseFeeByCityAndVehicleType(TALLINN, BIKE))
@@ -87,7 +87,7 @@ class DeliveryFeeCalculationServiceImplTest {
         assertNotNull(result);
         assertEquals(response, result);
         assertThat(result.getFee()).isEqualTo(response.getFee());
-     }
+    }
 
     @Test
     void testExtraFeeCalculation_shouldThrowException() {

@@ -1,6 +1,6 @@
 package com.deliveryfeecalculation.exception;
 
-public abstract class DeliveryFeeApplicationException extends RuntimeException  {
+public abstract class DeliveryFeeApplicationException extends RuntimeException {
     DeliveryFeeApplicationException(final String message) {
         super(message);
     }
