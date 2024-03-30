@@ -13,6 +13,5 @@ import java.util.Optional;
 public interface ExtraFeeRepository extends JpaRepository<ExtraFee,Long> {
     List<ExtraFee> findAllByNameAndVehicleTypeAndStatus(String name, VehicleType vehicleType, Status status);
     Optional<ExtraFee> findByVehicleTypeAndWeatherPhenomenonAndStatus(VehicleType vehicleType, String weatherPhenomenon, Status status);
-    Optional<ExtraFee> findAllByNameAndWeatherPhenomenonAndStatus(String name, String weatherPhenomenon, Status status);
 
 }
