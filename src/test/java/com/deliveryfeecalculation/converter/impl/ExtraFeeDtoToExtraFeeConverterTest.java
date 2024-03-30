@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeDtoWithData;
-import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeWithData;
 import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("ExtraFeeDtoToExtraFeeConverter")
 class ExtraFeeDtoToExtraFeeConverterTest {
