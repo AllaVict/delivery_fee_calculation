@@ -69,9 +69,8 @@ class DeliveryFeeCalculationControllerTest {
 
         @Test
         void testDeliveryFeeCalculate_statusCode400WhenInvalidRequested() {
-            request = null;
 
-            ResponseEntity<?> responseEntity = deliveryFeeCalculationController.getDeliveryFee(request);
+            ResponseEntity<?> responseEntity = deliveryFeeCalculationController.getDeliveryFee(null);
 
             assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         }

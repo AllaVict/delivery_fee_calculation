@@ -51,7 +51,7 @@ class WeatherDataImportingServiceImlIntegrationTest {
         List<Station> result = weatherDataImportingServiceIml.importWeatherDataFromIlmateenistus();
 
         assertNotNull(result);
-        assertEquals(result.size(), 3);
+        assertEquals(3,result.size());
         assertThat(result.get(0).getName()).isEqualTo(stations.get(0).getName());
         assertThat(result.get(1).getName()).isEqualTo(stations.get(1).getName());
         assertThat(result.get(2).getName()).isEqualTo(stations.get(2).getName());

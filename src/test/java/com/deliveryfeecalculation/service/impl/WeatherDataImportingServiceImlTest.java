@@ -21,11 +21,6 @@ import static org.mockito.Mockito.mock;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class WeatherDataImportingServiceImlTest {
 
-    private WebClient.Builder webClientMock;
-    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
-    private WebClient.RequestHeadersSpec requestHeadersSpecMock;
-    private WebClient.ResponseSpec responseSpecMock;
-
     @Autowired
     private WeatherDataImportingServiceIml weatherDataImportingServiceIml;
 
@@ -33,12 +28,6 @@ class WeatherDataImportingServiceImlTest {
 
     @BeforeEach
     public void setUp() {
-        webClientMock = mock(WebClient.Builder.class);
-        responseSpecMock = mock(WebClient.ResponseSpec.class);
-        requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
-        requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
-
-        MockitoAnnotations.openMocks(this);
         stations = createStationList();
     }
 
@@ -47,7 +36,7 @@ class WeatherDataImportingServiceImlTest {
         List<Station> result = weatherDataImportingServiceIml.importWeatherDataFromIlmateenistus();
 
         assertNotNull(result);
-        assertEquals(result.size(), 3);
+        assertEquals(3, result.size());
         assertThat(result.get(0).getName()).isEqualTo(stations.get(0).getName());
         assertThat(result.get(1).getName()).isEqualTo(stations.get(1).getName());
         assertThat(result.get(2).getName()).isEqualTo(stations.get(2).getName());

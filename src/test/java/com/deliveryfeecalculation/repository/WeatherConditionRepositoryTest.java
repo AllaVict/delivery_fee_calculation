@@ -99,7 +99,7 @@ class WeatherConditionRepositoryTest {
             weatherConditionRepository.save(weatherConditionOne);
             List<WeatherCondition> weatherConditionList = weatherConditionRepository.findAll();
 
-            assertEquals(weatherConditionList.size(), 1);
+            assertEquals( 1, weatherConditionList.size());
             assertFalse(weatherConditionList.isEmpty());
         }
 
@@ -108,7 +108,7 @@ class WeatherConditionRepositoryTest {
             weatherConditionRepository.deleteAll();
             List<WeatherCondition> weatherConditionList = weatherConditionRepository.findAll();
 
-            assertEquals(weatherConditionList.size(), 0);
+            assertEquals(0, weatherConditionList.size());
             assertTrue(weatherConditionList.isEmpty());
         }
     }
@@ -137,7 +137,7 @@ class WeatherConditionRepositoryTest {
             List<WeatherCondition> allByStationName = weatherConditionRepository.findAllByStationName(TALLINN);
 
             assertFalse(allByStationName.isEmpty());
-            assertEquals(allByStationName.size(), 1);
+            assertEquals(1, allByStationName.size());
         }
 
         @Test
