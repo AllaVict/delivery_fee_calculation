@@ -13,6 +13,7 @@ public final class Constants {
         public static final String URL = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
 
         public static final String FEE_URL = "/fee";
+        public static final String EXTRA_FEE_URL = "/extra_fee";
 
         private Endpoints() {
         }

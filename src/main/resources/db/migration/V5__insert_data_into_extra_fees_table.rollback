@@ -1,0 +1,1 @@
+DELETE FROM extra_fees WHERE name IN ('air temperature', 'wind speed', 'weather phenomenon');
