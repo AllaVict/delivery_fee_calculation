@@ -8,37 +8,38 @@ import org.junit.jupiter.api.Test;
 
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeWithData;
 import static org.junit.jupiter.api.Assertions.*;
+
 @DisplayName("ExtraFeeToExtraFeeDtoConverter")
 class ExtraFeeToExtraFeeDtoConverterTest {
 
-        private ExtraFeeToExtraFeeDtoConverter converter = new ExtraFeeToExtraFeeDtoConverter();
+    private ExtraFeeToExtraFeeDtoConverter converter = new ExtraFeeToExtraFeeDtoConverter();
 
-        private ExtraFee extraFee;
+    private ExtraFee extraFee;
 
-        @BeforeEach
-        public void setUp() {
-            extraFee = createExtraFeeWithData();
-        }
-
-        @Test
-        void shouldGetTargetClass() {
-            assertEquals(ExtraFeeDTO.class, converter.getTargetClass());
-        }
-
-        @Test
-        void shouldGetSourceClass() {
-            assertEquals(ExtraFee.class, converter.getSourceClass());
-        }
-
-
-        @Test
-        void testConvert_shouldConvertExtraFeeToExtraFeeDto() {
-            ExtraFeeDTO result = converter.convert(extraFee);
-            System.out.println("extraFee: "+extraFee);
-
-            assertNotNull(result);
-            assertEquals(extraFee.getName(), result.getName());
-            assertEquals(extraFee.getStatus(), result.getStatus());
-        }
-
+    @BeforeEach
+    public void setUp() {
+        extraFee = createExtraFeeWithData();
     }
+
+    @Test
+    void shouldGetTargetClass() {
+        assertEquals(ExtraFeeDTO.class, converter.getTargetClass());
+    }
+
+    @Test
+    void shouldGetSourceClass() {
+        assertEquals(ExtraFee.class, converter.getSourceClass());
+    }
+
+
+    @Test
+    void testConvert_shouldConvertExtraFeeToExtraFeeDto() {
+        ExtraFeeDTO result = converter.convert(extraFee);
+        System.out.println("extraFee: " + extraFee);
+
+        assertNotNull(result);
+        assertEquals(extraFee.getName(), result.getName());
+        assertEquals(extraFee.getStatus(), result.getStatus());
+    }
+
+}

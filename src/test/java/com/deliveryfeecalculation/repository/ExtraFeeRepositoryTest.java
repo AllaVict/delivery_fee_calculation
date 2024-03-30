@@ -31,6 +31,7 @@ class ExtraFeeRepositoryTest {
     private List<ExtraFee> extraFeeList;
 
     private ExtraFee extraFee;
+
     @BeforeEach
     public void setUp() {
         extraFeeList = createExtraFeeList();
@@ -87,6 +88,7 @@ class ExtraFeeRepositoryTest {
         }
 
     }
+
     @Nested
     @DisplayName("When Find ExtraFee by Id")
     class FindExtraFeeByIdTests {
@@ -120,7 +122,7 @@ class ExtraFeeRepositoryTest {
             extraFeeRepository.save(extraFee);
             List<ExtraFee> extraFeeList = extraFeeRepository.findAll();
 
-            assertEquals( 1,extraFeeList.size());
+            assertEquals(1, extraFeeList.size());
             assertFalse(extraFeeList.isEmpty());
         }
 

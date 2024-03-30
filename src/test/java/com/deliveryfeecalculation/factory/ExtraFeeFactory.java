@@ -15,7 +15,7 @@ import static com.deliveryfeecalculation.domain.enums.VehicleType.SCOOTER;
 
 public class ExtraFeeFactory {
 
-    private static TypeConverter<ExtraFee,  ExtraFeeDTO> extraFeeToExtraFeeDTO;
+    private static TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeToExtraFeeDTO;
     private static final LocalDateTime CREATED_DATE = LocalDateTime.of(2024, 3, 23, 20, 24);
 
     private ExtraFeeFactory() {
@@ -25,6 +25,7 @@ public class ExtraFeeFactory {
         return createExtraFee(101L, "air temperature", SCOOTER, 1.00, -10.0, null,
                 null, false, Status.CURRENT, CREATED_DATE);
     }
+
     public static ExtraFeeDTO createExtraFeeDtoWithData() {
         return createExtraFeeDTO(101L, "air temperature", SCOOTER, 1.00, -10.0, null,
                 null, false, Status.CURRENT, CREATED_DATE);
@@ -34,7 +35,7 @@ public class ExtraFeeFactory {
         final List<ExtraFee> extraFeeList = Arrays.asList(
                 createExtraFee(104L, "wind speed", BIKE, 0.50, 10.0, 20.0, null, false, Status.CURRENT, CREATED_DATE),
                 createExtraFee(105L, "wind speed", BIKE, null, null, 20.0, null, true, Status.CURRENT, CREATED_DATE)
-                );
+        );
         return extraFeeList;
     }
 
@@ -44,7 +45,7 @@ public class ExtraFeeFactory {
                 createExtraFee(101L, "air temperature", BIKE, 1.00, -10.0, null, null, false, Status.CURRENT, CREATED_DATE),
                 createExtraFee(102L, "air temperature", SCOOTER, 0.50, -10.0, 0.0, null, false, Status.CURRENT, CREATED_DATE),
                 createExtraFee(103L, "air temperature", BIKE, 0.50, -10.0, 0.0, null, false, Status.CURRENT, CREATED_DATE)
-                );
+        );
         return extraFeeList;
     }
 
@@ -77,6 +78,7 @@ public class ExtraFeeFactory {
         );
         return extraFeeList;
     }
+
     public static List<ExtraFeeDTO> createExtraFeeDTOList() {
         final List<ExtraFeeDTO> extraFeeList = Arrays.asList(
                 createExtraFeeDTO(100L, "air temperature", SCOOTER, 1.00, -10.0, null, null, false, Status.CURRENT, CREATED_DATE),

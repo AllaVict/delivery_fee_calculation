@@ -31,12 +31,12 @@ class ExtraFeeDtoToExtraFeeConverterTest {
             assertEquals(ExtraFeeDTO.class, converter.getSourceClass());
         }
 
-        @Test
-        void testConvert_shouldConvertExtraFeeDToExtraFee() {
-            ExtraFee result = converter.convert(extraFeeDTO);
+    @Test
+    void testConvert_shouldConvertExtraFeeDToExtraFee() {
+        ExtraFee result = converter.convert(extraFeeDTO);
 
-            assertNotNull(result);
-            assertEquals(extraFeeDTO.getName(), result.getName());
-            assertEquals(extraFeeDTO.getStatus(), result.getStatus());
-        }
+        assertNotNull(result);
+        assertEquals(extraFeeDTO.getName(), result.getName());
+        assertEquals(extraFeeDTO.getStatus(), result.getStatus());
+    }
     }
