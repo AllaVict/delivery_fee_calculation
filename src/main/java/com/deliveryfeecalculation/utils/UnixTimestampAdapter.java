@@ -8,14 +8,14 @@ import java.time.ZoneOffset;
 
 public class UnixTimestampAdapter extends XmlAdapter<String, LocalDateTime> {
     @Override
-    public LocalDateTime unmarshal(String v) throws Exception {
+    public LocalDateTime unmarshal(String v) {
         if (v == null) return null;
         long epochSecond = Long.parseLong(v);
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneOffset.UTC);
     }
 
     @Override
-    public String marshal(LocalDateTime v) throws Exception {
+    public String marshal(LocalDateTime v) {
         if (v == null) return null;
         return String.valueOf(v.toInstant(ZoneOffset.UTC).getEpochSecond());
     }

@@ -43,7 +43,8 @@ public class WeatherDataProcessScheduledServiceImpl implements WeatherDataProces
         final List<Station> stationList = weatherDataImportingService.importWeatherDataFromIlmateenistus();
         final List<WeatherCondition> weatherConditionList = weatherConditionService.saveWeatherCondition(stationList);
 
-        LOGGER.debug("In WeatherDataProcessScheduledServiceImpl save importing weather data for cities : {} ", weatherConditionList.stream().map(s -> s.getStationName()).toList());
+        LOGGER.debug("In WeatherDataProcessScheduledServiceImpl save importing weather data for cities : {} ",
+                weatherConditionList.stream().map(WeatherCondition::getStationName).toList());
 
     }
 
