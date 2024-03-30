@@ -1,5 +1,6 @@
 package com.deliveryfeecalculation.service.impl;
 
+import com.deliveryfeecalculation.domain.enums.City;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ class ExtraFeeCalculationServiceImplTest {
 
     @Test
     void testExtraFeeCalculation_ReturnExtraFeeSuccessfully() {
-        weatherCondition = createWeatherConditionWithParameters(-15.0,15.0, "SNOW");
-        response =new Response(DELIVERY_FEE_CALCULATION, 2.5);
+        weatherCondition = createWeatherConditionWithParameters(-15.0, 15.0, "SNOW", City.TALLINN);
+        response = new Response(DELIVERY_FEE_CALCULATION, 2.5);
 
         Response result = extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE);
 
@@ -38,7 +39,7 @@ class ExtraFeeCalculationServiceImplTest {
     @Test
     void testExtraFeeCalculation_ReturnResponseWithVehicleTypeIsForbidden() {
         weatherCondition = createWeatherConditionWithHail();
-        response =new Response(VEHICLE_FORBIDDEN, 0.0);
+        response = new Response(VEHICLE_FORBIDDEN, 0.0);
         Response result = extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE);
 
         assertNotNull(result);
@@ -49,7 +50,7 @@ class ExtraFeeCalculationServiceImplTest {
     @Test
     void testExtraFeeCalculation_shouldThrowException() {
         weatherCondition = new WeatherCondition();
-        response =new Response();
+        response = new Response();
         assertThrows(NullPointerException.class,
                 () -> extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE));
     }

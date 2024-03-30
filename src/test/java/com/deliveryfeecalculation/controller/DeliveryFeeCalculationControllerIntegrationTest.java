@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(DeliveryFeeCalculationController.class)
 class DeliveryFeeCalculationControllerIntegrationTest {
@@ -44,14 +45,14 @@ class DeliveryFeeCalculationControllerIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        request= createRequest();
+        request = createRequest();
     }
 
     @Test
     void testDeliveryFeeCalculate_ShouldReturnResponseWithOkStatus() throws Exception {
-         response = new Response("Delivery fee calculation: ", 5.00);
+        response = new Response("Delivery fee calculation: ", 5.00);
 
-        given(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class),any(VehicleType.class)))
+        given(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class), any(VehicleType.class)))
                 .willReturn(response);
 
         mockMvc.perform(get(FEE_URL)
@@ -62,11 +63,12 @@ class DeliveryFeeCalculationControllerIntegrationTest {
 
         verify(deliveryFeeCalculationService, times(1)).deliveryFeeCalculate(any(City.class), any(VehicleType.class));
     }
+
     @Test
     void testDeliveryFeeCalculate_InvalidData() throws Exception {
         response = new Response("Delivery fee calculation: ", 5.00);
 
-        given(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class),any(VehicleType.class)))
+        given(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class), any(VehicleType.class)))
                 .willReturn(response);
         mockMvc.perform(get(FEE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +78,7 @@ class DeliveryFeeCalculationControllerIntegrationTest {
     }
 
     @Test
-    void testDeliveryFeeCalculate_statusCode404WhenInvalidRequested() throws Exception{
+    void testDeliveryFeeCalculate_statusCode404WhenInvalidRequested() throws Exception {
 
         mockMvc.perform(get("/invalid")
                         .contentType(MediaType.APPLICATION_JSON)

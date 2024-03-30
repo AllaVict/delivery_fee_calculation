@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import static com.deliveryfeecalculation.factory.RequestFactory.createRequest;
 import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FORBIDDEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ class DeliveryFeeCalculationControllerTest {
 
     @BeforeEach
     public void setUp() {
-        request= createRequest();
+        request = createRequest();
     }
 
     @Nested
@@ -46,7 +47,7 @@ class DeliveryFeeCalculationControllerTest {
         @Test
         void testDeliveryFeeCalculate_status200ShouldReturnResponse() {
             response = new Response("Delivery fee calculation: ", 5.00);
-            when(deliveryFeeCalculationService.deliveryFeeCalculate(City.TALLINN,VehicleType.BIKE))
+            when(deliveryFeeCalculationService.deliveryFeeCalculate(City.TALLINN, VehicleType.BIKE))
                     .thenReturn(response);
 
             ResponseEntity<?> responseEntity = deliveryFeeCalculationController.getDeliveryFee(request);
@@ -54,10 +55,11 @@ class DeliveryFeeCalculationControllerTest {
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             assertEquals(response, responseEntity.getBody());
         }
+
         @Test
         void testDeliveryFeeCalculate_status200ShouldReturnResponseWithVehicleTypeIsForbidden() {
             response = new Response(VEHICLE_FORBIDDEN, 0.00);
-            when(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class),any(VehicleType.class)))
+            when(deliveryFeeCalculationService.deliveryFeeCalculate(any(City.class), any(VehicleType.class)))
                     .thenReturn(response);
 
             ResponseEntity<?> responseEntity = deliveryFeeCalculationController.getDeliveryFee(request);
@@ -67,7 +69,7 @@ class DeliveryFeeCalculationControllerTest {
 
         @Test
         void testDeliveryFeeCalculate_statusCode400WhenInvalidRequested() {
-            request= null;
+            request = null;
 
             ResponseEntity<?> responseEntity = deliveryFeeCalculationController.getDeliveryFee(request);
 
