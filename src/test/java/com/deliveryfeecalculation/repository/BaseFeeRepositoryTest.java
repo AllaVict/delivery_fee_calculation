@@ -99,7 +99,7 @@ class BaseFeeRepositoryTest {
             baseFeeRepository.deleteAll();
             List<BaseFee> baseFeeList = baseFeeRepository.findAll();
 
-            assertEquals(baseFeeList.size(), 0);
+            assertEquals(0, baseFeeList.size());
             assertTrue(baseFeeList.isEmpty());
         }
     }
