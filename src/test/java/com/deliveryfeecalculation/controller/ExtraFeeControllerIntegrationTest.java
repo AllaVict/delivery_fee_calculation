@@ -108,6 +108,7 @@ class ExtraFeeControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(extraFeeDTOList)))
                     .andDo(print())
                     .andExpect(status().isOk());
+
         }
 
         @Test
@@ -120,6 +121,7 @@ class ExtraFeeControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(extraFeeDTOList)))
                     .andDo(print())
                     .andExpect(status().isNotFound());
+
         }
     }
 
@@ -136,6 +138,7 @@ class ExtraFeeControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(extraFeeDTO)))
                     .andDo(print())
                     .andExpect(status().isCreated());
+
         }
 
         @Test
@@ -146,6 +149,7 @@ class ExtraFeeControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(extraFeeDTO)))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
+
         }
 
     }
@@ -162,6 +166,7 @@ class ExtraFeeControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(extraFee)))
                     .andDo(print())
                     .andExpect(status().isOk());
+
         }
 
         @Test
@@ -174,6 +179,7 @@ class ExtraFeeControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isNotFound());
+
         }
 
         @Test
@@ -185,6 +191,7 @@ class ExtraFeeControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isNotFound());
+
         }
 
         @Test
@@ -193,6 +200,7 @@ class ExtraFeeControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().is4xxClientError());
+
         }
     }
 
@@ -209,6 +217,7 @@ class ExtraFeeControllerIntegrationTest {
                     .andExpect(content().string(containsString("The ExtraFee has deleted successfully")))
                     .andDo(print())
                     .andExpect(status().isOk());
+
         }
 
         @Test

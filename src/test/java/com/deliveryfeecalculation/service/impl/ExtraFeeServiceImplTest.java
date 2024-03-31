@@ -73,6 +73,7 @@ class ExtraFeeServiceImplTest {
             assertNotNull(result);
             assertEquals(result, extraFeeDTO);
             Assertions.assertThat(result.getName()).isEqualTo(extraFeeDTO.getName());
+
         }
 
         @Test
@@ -83,7 +84,6 @@ class ExtraFeeServiceImplTest {
         }
 
     }
-
 
     @Nested
     @DisplayName("When Find All ExtraFees")
@@ -97,6 +97,7 @@ class ExtraFeeServiceImplTest {
             List<ExtraFeeDTO> foundExtraFeeDtoList = extraFeeService.findAllExtraFees();
 
             assertEquals(extraFeeDTOList.size(), foundExtraFeeDtoList.size());
+
         }
 
         @Test
@@ -116,7 +117,6 @@ class ExtraFeeServiceImplTest {
         }
 
     }
-
 
     @Nested
     @DisplayName("When Create a ExtraFee")
@@ -159,12 +159,14 @@ class ExtraFeeServiceImplTest {
             assertThat(result.getName()).isEqualTo(extraFeeDTO.getName());
             assertNotNull(result);
             verify(extraFeeRepository).saveAndFlush(any(ExtraFee.class));
+
         }
 
         @Test
         void testArchiveExtraFee_shouldThrowException() {
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.archiveExtraFee(EXTRA_FEE_ID));
+
         }
 
     }
@@ -177,6 +179,7 @@ class ExtraFeeServiceImplTest {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.of(extraFee));
             extraFeeService.deleteExtraFeeById(EXTRA_FEE_ID);
             verify(extraFeeRepository, times(1)).delete(extraFee);
+
         }
 
         @Test
@@ -185,7 +188,9 @@ class ExtraFeeServiceImplTest {
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.deleteExtraFeeById(EXTRA_FEE_ID));
             verify(extraFeeRepository, times(0)).delete(extraFee);
+
         }
+
     }
 
 }

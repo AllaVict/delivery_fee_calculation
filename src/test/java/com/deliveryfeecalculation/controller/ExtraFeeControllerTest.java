@@ -43,13 +43,15 @@ class ExtraFeeControllerTest {
 
     @BeforeEach
     public void setUp() {
-        extraFeeController= new ExtraFeeController(extraFeeService);
+        extraFeeController = new ExtraFeeController(extraFeeService);
         extraFeeList = createExtraFeeList();
         extraFee = createExtraFeeWithData();
-        archiveExtraFeeDTO =createExtraFeeDtoWithData();
-        extraFeeDTO= createExtraFeeDtoWithData();
-        extraFeeDTOList= createExtraFeeDTOList();
+        archiveExtraFeeDTO = createExtraFeeDtoWithData();
+        extraFeeDTO = createExtraFeeDtoWithData();
+        extraFeeDTOList = createExtraFeeDTOList();
+
     }
+
     @Nested
     @DisplayName("When Find ExtraFee By Id")
     class FindExtraFeeByIdTests {
@@ -61,6 +63,7 @@ class ExtraFeeControllerTest {
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             assertEquals(extraFeeDTO, responseEntity.getBody());
+
         }
 
         @Test
@@ -69,8 +72,9 @@ class ExtraFeeControllerTest {
                     .thenThrow(new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
 
             assertThrows(ResourceNotFoundException.class,
-                    () ->extraFeeController.findExtraFeeById(EXTRA_FEE_ID));
+                    () -> extraFeeController.findExtraFeeById(EXTRA_FEE_ID));
         }
+
     }
 
     @Nested
@@ -85,11 +89,12 @@ class ExtraFeeControllerTest {
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             assertEquals(extraFeeDTOList, responseEntity.getBody());
+
         }
 
         @Test
         void testFindAllExtraFees_shouldThrowException() {
-            extraFeeDTOList =new ArrayList<>();
+            extraFeeDTOList = new ArrayList<>();
             when(extraFeeService.findAllExtraFees()).thenReturn(extraFeeDTOList);
 
             ResponseEntity<?> responseEntity = extraFeeController.getAllExtraFees();
@@ -116,7 +121,7 @@ class ExtraFeeControllerTest {
         @Test
         void testCreateExtraFee_InvalidData() {
             extraFee = new ExtraFee();
-            extraFeeDTO= new ExtraFeeDTO();
+            extraFeeDTO = new ExtraFeeDTO();
             ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFeeDTO);
 
             assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
