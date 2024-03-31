@@ -20,7 +20,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.flywaydb:flyway-core'
     runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.2.3'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.springframework:spring-test")
+    testImplementation("com.squareup.okhttp3:mockwebserver")
 }
 
 tasks.named('test') {
