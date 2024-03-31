@@ -1,5 +1,8 @@
 package com.deliveryfeecalculation.controller;
 
+import com.deliveryfeecalculation.converter.TypeConverter;
+import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
+import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.repository.ExtraFeeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,12 +25,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.EXTRA_FEE_URL;
-import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeList;
-import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeWithData;
+import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,9 +47,14 @@ class ExtraFeeControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @MockBean
     private ExtraFeeRepository extraFeeRepository;
+
+    @MockBean
+    private TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter;
+
+    @MockBean
+    private TypeConverter<ExtraFee,ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter;
 
     @InjectMocks
     private ExtraFeeController extraFeeController;
@@ -53,13 +62,18 @@ class ExtraFeeControllerIntegrationTest {
     private static final long EXTRA_FEE_ID = 101L;
 
     private List<ExtraFee> extraFeeList;
-    @MockBean
+    private List<ExtraFeeDTO> extraFeeDTOList;
     private ExtraFee extraFee;
+    private ExtraFeeDTO archiveExtraFeeDTO;
+    private ExtraFeeDTO extraFeeDTO;
 
     @BeforeEach
     public void setUp() {
         extraFeeList = createExtraFeeList();
         extraFee = createExtraFeeWithData();
+        archiveExtraFeeDTO =createExtraFeeDtoWithData();
+        extraFeeDTO= createExtraFeeDtoWithData();
+        extraFeeDTOList= createExtraFeeDTOList();
     }
 
     @Nested
@@ -67,10 +81,12 @@ class ExtraFeeControllerIntegrationTest {
     class FindAdvertByIdTests {
              @Test
             void testFindExtraFeeById_ShouldReturnExtraFee() throws Exception {
-                given(extraFeeRepository.findById(EXTRA_FEE_ID)).willReturn(Optional.ofNullable(extraFee));
-                mockMvc.perform(get(EXTRA_FEE_URL+"/"+EXTRA_FEE_ID)
+                 given(extraFeeRepository.findById(EXTRA_FEE_ID)).willReturn(Optional.ofNullable(extraFee));
+                 given(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).willReturn(extraFeeDTO);
+
+                 mockMvc.perform(get(EXTRA_FEE_URL+"/"+EXTRA_FEE_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(extraFee)))
+                                .content(objectMapper.writeValueAsString(extraFeeDTO)))
                         .andDo(print())
                         .andExpect(status().isOk());
             }
@@ -79,10 +95,11 @@ class ExtraFeeControllerIntegrationTest {
             void testFindAdvertById_ShouldNoAdvertFound() throws Exception {
                 extraFee =null;
                 given(extraFeeRepository.findById(EXTRA_FEE_ID)).willReturn(Optional.ofNullable(extraFee));
+                given(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).willReturn(extraFeeDTO);
 
                 mockMvc.perform(get(EXTRA_FEE_URL+"/"+EXTRA_FEE_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(extraFee)))
+                                .content(objectMapper.writeValueAsString(extraFeeDTO)))
                         .andDo(print())
                         .andExpect(status().isNotFound());
             }
@@ -96,6 +113,8 @@ class ExtraFeeControllerIntegrationTest {
             @Test
             void testFindAllExtraFees_shouldReturnAllExtraFees() throws Exception{
                 given(extraFeeRepository.findAll()).willReturn(extraFeeList);
+                given(extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList)).willReturn(extraFeeDTOList);
+
                 mockMvc.perform(get(EXTRA_FEE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(extraFeeList)))
@@ -107,6 +126,8 @@ class ExtraFeeControllerIntegrationTest {
             void testFindAllAdverts_shouldThrowException() throws Exception{
                 extraFeeList =new ArrayList<>();
                 given(extraFeeRepository.findAll()).willReturn(extraFeeList);
+                given(extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList)).willReturn(extraFeeDTOList);
+
                 mockMvc.perform(get(EXTRA_FEE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(extraFeeList)))
@@ -121,10 +142,12 @@ class ExtraFeeControllerIntegrationTest {
         @Test
         void testCreateExtraFee_ShouldReturnExtraFee() throws Exception {
             ExtraFee savedExtraFee = createExtraFeeWithData();
+            given(extraFeeDTOExtraFeeTypeConverter.convert(extraFeeDTO)).willReturn(savedExtraFee);
             given(extraFeeRepository.save(extraFee)).willReturn(savedExtraFee);
+
             mockMvc.perform(post(EXTRA_FEE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(extraFee)))
+                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
                     .andDo(print())
                     .andExpect(status().isCreated());
         }
@@ -147,8 +170,11 @@ class ExtraFeeControllerIntegrationTest {
             @Test
             void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() throws Exception {
                 given(extraFeeRepository.findById(EXTRA_FEE_ID)).willReturn(Optional.ofNullable(extraFee));
+                archiveExtraFeeDTO.setStatus(Status.ARCHIVE);
                 given(extraFeeRepository.save(extraFee)).willReturn(extraFee);
-                        mockMvc.perform(put( EXTRA_FEE_URL +"/"+EXTRA_FEE_ID)
+                given(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).willReturn(archiveExtraFeeDTO);
+
+                mockMvc.perform(put( EXTRA_FEE_URL +"/"+EXTRA_FEE_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(extraFee)))
                         .andDo(print())

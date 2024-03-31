@@ -43,7 +43,7 @@ class ExtraFeeControllerTest {
     private static final long EXTRA_FEE_ID = 101L;
 
     private List<ExtraFee> extraFeeList;
-    List<ExtraFeeDTO> extraFeeDTOList;
+    private List<ExtraFeeDTO> extraFeeDTOList;
     private ExtraFee extraFee;
     private ExtraFeeDTO archiveExtraFeeDTO;
     private ExtraFeeDTO extraFeeDTO;
