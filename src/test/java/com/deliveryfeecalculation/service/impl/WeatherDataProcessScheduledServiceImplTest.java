@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+
 import static com.deliveryfeecalculation.factory.StationFactory.createStationList;
 import static com.deliveryfeecalculation.factory.WeatherConditionFactory.createWeatherConditionList;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,14 +20,18 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WeatherDataProcessScheduledServiceImplTest {
+
     @Mock
     private WeatherDataImportingServiceIml weatherDataImportingService;
 
     @Mock
     private WeatherConditionServiceImpl weatherConditionService;
+
     @InjectMocks
     private WeatherDataProcessScheduledServiceImpl weatherDataProcessScheduledService;
+
     private List<Station> stations;
+
     private List<WeatherCondition> weatherConditionList;
 
     @BeforeEach

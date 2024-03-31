@@ -61,7 +61,7 @@ public class ExtraFeeController {
         if (extraFeeId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert ExtraFee id");
 
-       final ExtraFeeDTO archivedExtraFeeDto = extraFeeService.archiveExtraFee(extraFeeId);
+        final ExtraFeeDTO archivedExtraFeeDto = extraFeeService.archiveExtraFee(extraFeeId);
 
         LOGGER.debug("In archiveExtraFee received PUT extraFee archive successfully with id {} ", extraFeeId);
 

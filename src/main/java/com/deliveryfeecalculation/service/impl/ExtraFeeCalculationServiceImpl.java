@@ -40,7 +40,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
      * or calculates the additional charges accordingly.
      *
      * @param weatherCondition the current weather conditions affecting the delivery
-     * @param vehicleType the type of vehicle being used for the delivery
+     * @param vehicleType      the type of vehicle being used for the delivery
      * @return a {@link Response} object containing either the calculated extra fee or a message indicating that the vehicle type is forbidden.
      */
     public Response extraFeesCalculate(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
@@ -50,7 +50,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
         final Response weatherPhenomenonResponse = determinePhenomenonExtraFee(weatherCondition, vehicleType);
 
         if (airTemperatureResponse.getMessage().equals(VEHICLE_FORBIDDEN) || windSpeedResponse.getMessage().equals(VEHICLE_FORBIDDEN)
-                || weatherPhenomenonResponse.getMessage().equals(VEHICLE_FORBIDDEN) ) {
+                || weatherPhenomenonResponse.getMessage().equals(VEHICLE_FORBIDDEN)) {
             return new Response(VEHICLE_FORBIDDEN, 0.0);
         }
 
@@ -69,7 +69,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
      * @param weatherCondition The current weather conditions affecting the delivery.
      * @param vehicleType      The type of vehicle being used for delivery.
      * @return A {@link Response} object containing either the calculated extra fee for the weather phenomenon
-     *         or a message indicating that the vehicle type is forbidden under these conditions.
+     * or a message indicating that the vehicle type is forbidden under these conditions.
      */
     private Response determinePhenomenonExtraFee(final WeatherCondition weatherCondition, final VehicleType vehicleType) {
 
@@ -105,7 +105,7 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
      * @param weatherCondition The current weather conditions affecting the delivery.
      * @param vehicleType      The type of vehicle being used for the delivery.
      * @return A {@link Response} object containing the calculated extra fee based on the specified weather condition attribute
-     *         or a message indicating that the vehicle type is forbidden, if applicable.
+     * or a message indicating that the vehicle type is forbidden, if applicable.
      */
     private Response determineAirOrWindExtraFee(final String nameExtraFee,
                                                 final WeatherCondition weatherCondition,
@@ -125,25 +125,25 @@ public class ExtraFeeCalculationServiceImpl implements ExtraFeeCalculationServic
             if (extraFee.getLowerLimit() != null && extraFee.getUpperLimit() != null &&
                     (current <= extraFee.getUpperLimit() && current >= extraFee.getLowerLimit())) {
 
-                    return extraFee.getForbidden()
-                            ? new Response(VEHICLE_FORBIDDEN, 0.00)
-                            : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
+                return extraFee.getForbidden()
+                        ? new Response(VEHICLE_FORBIDDEN, 0.00)
+                        : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
 
             }
 
             if (extraFee.getLowerLimit() == null && extraFee.getUpperLimit() != null &&
                     (current > extraFee.getUpperLimit())) {
-                    return extraFee.getForbidden()
-                            ? new Response(VEHICLE_FORBIDDEN, 0.00)
-                            : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
+                return extraFee.getForbidden()
+                        ? new Response(VEHICLE_FORBIDDEN, 0.00)
+                        : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
 
             }
 
             if (extraFee.getLowerLimit() != null && extraFee.getUpperLimit() == null &&
                     (current < extraFee.getLowerLimit())) {
-                    return extraFee.getForbidden()
-                            ? new Response(VEHICLE_FORBIDDEN, 0.00)
-                            : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
+                return extraFee.getForbidden()
+                        ? new Response(VEHICLE_FORBIDDEN, 0.00)
+                        : new Response(DELIVERY_FEE_CALCULATION, extraFee.getFee());
 
             }
         }

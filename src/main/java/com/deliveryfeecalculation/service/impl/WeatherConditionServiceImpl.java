@@ -67,7 +67,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         WeatherCondition weatherCondition = new WeatherCondition();
         if (station.getName().equalsIgnoreCase(TALLINN)) weatherCondition.setStationName(City.TALLINN);
         if (station.getName().equalsIgnoreCase(TARTU)) weatherCondition.setStationName(City.TARTU);
-        if (station.getName().equalsIgnoreCase(PARNU)) weatherCondition.setStationName(City.PÄRNU);
+        if (station.getName().equalsIgnoreCase(PARNU)) weatherCondition.setStationName(City.PARNU);
 
         weatherCondition.setAirTemperature(station.getAirtemperature());
         weatherCondition.setWindSpeed(station.getWindspeed());

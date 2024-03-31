@@ -44,7 +44,9 @@ class DeliveryFeeCalculationServiceImplTest {
     private DeliveryFeeCalculationServiceImpl deliveryFeeCalculationService;
 
     private Response response;
+
     private WeatherCondition weatherCondition;
+
     private BaseFee baseFee;
 
     @BeforeEach

@@ -6,7 +6,6 @@ import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.domain.model.WeatherCondition;
 import com.deliveryfeecalculation.repository.ExtraFeeRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -39,35 +37,23 @@ class ExtraFeeCalculationServiceImplTest {
     @InjectMocks
     private ExtraFeeCalculationServiceImpl extraFeeCalculationService;
 
-    private Response response;
     private WeatherCondition weatherCondition;
 
-    private List<ExtraFee> extraFeeList;
-    private List<ExtraFee> windExtraFeeList;
-
-    private ExtraFee extraFee;
     private static final LocalDateTime CREATED_DATE = LocalDateTime.of(2024, 3, 23, 20, 24);
-
-
-    @BeforeEach
-    public void setUp() {
-        extraFeeList = createExtraFeeList();
-        extraFee = createExtraFeeWithData();
-        windExtraFeeList = createWindExtraFeeList();
-    }
 
     @Test
     void testExtraFeeCalculation_shouldThrowException() {
         weatherCondition = new WeatherCondition();
-        response = new Response();
+
         assertThrows(NullPointerException.class,
                 () -> extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE));
     }
+
     @ParameterizedTest()
     @MethodSource("arguments")
-    void testExtraFeesCalculate_WithVariousParameters_ReturnsCorrectExtraFeeResponse(Response response,
-                                                                                     WeatherCondition weatherCondition,
-                                                                                     ExtraFee phenomenonExtraFee) {
+    void testExtraFeesCalculate_WithVariousParameters_ReturnsCorrectExtraFeeResponse(final Response response,
+                                                                                     final WeatherCondition weatherCondition,
+                                                                                     final ExtraFee phenomenonExtraFee) {
         when(extraFeeRepository.findByVehicleTypeAndWeatherPhenomenonAndStatus(BIKE,
                 weatherCondition.getWeatherPhenomenon(), Status.CURRENT))
                 .thenReturn(Optional.ofNullable(phenomenonExtraFee));
@@ -87,10 +73,10 @@ class ExtraFeeCalculationServiceImplTest {
         return Stream.of(
                 Arguments.of(new Response(VEHICLE_FORBIDDEN, 0.0),
                         createWeatherConditionWithHail(),
-                        createExtraFee(111L, "weather phenomenon", BIKE, 0.00, null, null,"HAIL", true, Status.CURRENT, CREATED_DATE)),
+                        createExtraFee(111L, "weather phenomenon", BIKE, 0.00, null, null, "HAIL", true, Status.CURRENT, CREATED_DATE)),
                 Arguments.of(new Response(VEHICLE_FORBIDDEN, 0.0),
                         createWeatherConditionWithParameters(0.0, 25.0, "CLOUDY", City.TALLINN),
-                        createExtraFee(111L, "weather phenomenon", BIKE, 0.00, null, null,"CLOUDY", true, Status.CURRENT, CREATED_DATE)),
+                        createExtraFee(111L, "weather phenomenon", BIKE, 0.00, null, null, "CLOUDY", true, Status.CURRENT, CREATED_DATE)),
                 Arguments.of(new Response(DELIVERY_FEE_CALCULATION, 2.5),
                         createWeatherConditionWithParameters(-11.0, 15.0, "SNOW", City.TALLINN),
                         createExtraFee(110L, "weather phenomenon", BIKE, 1.00, null, null, "SNOW",

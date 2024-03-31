@@ -35,7 +35,6 @@ class DeliveryFeeCalculationControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @MockBean
     private DeliveryFeeCalculationService deliveryFeeCalculationService;
 
