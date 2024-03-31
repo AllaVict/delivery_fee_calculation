@@ -63,7 +63,7 @@ public class ExtraFeeController {
 
        final ExtraFeeDTO archivedExtraFeeDto = extraFeeService.archiveExtraFee(extraFeeId);
 
-        LOGGER.debug("In archiveExtraFee received PUT extraFee archive successfully with id {} ", archivedExtraFeeDto.getId());
+        LOGGER.debug("In archiveExtraFee received PUT extraFee archive successfully with id {} ", extraFeeId);
 
         return ResponseEntity.status(HttpStatus.OK).body(archivedExtraFeeDto);
     }

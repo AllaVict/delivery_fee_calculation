@@ -60,7 +60,7 @@ class ExtraFeeServiceImplTest {
 
     @Nested
     @DisplayName("When Find ExtraFee By Id")
-    class FindAdvertByIdTests {
+    class FindExtraFeeByIdTests {
         @Test
         void testFindExtraFeeById_ShouldReturnExtraFee() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
@@ -87,7 +87,7 @@ class ExtraFeeServiceImplTest {
 
     @Nested
     @DisplayName("When Find All ExtraFees")
-    class FindAllAdvertsTests {
+    class FindAllExtraFeesTests {
 
         @Test
         void testFindAllExtraFees_shouldReturnAllExtraFees() {
@@ -145,7 +145,7 @@ class ExtraFeeServiceImplTest {
 
     @Nested
     @DisplayName("When archive a ExtraFee")
-    class EditAdvertTests {
+    class ArchiveExtraFeeTests {
         @Test
         void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
@@ -166,7 +166,6 @@ class ExtraFeeServiceImplTest {
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.archiveExtraFee(EXTRA_FEE_ID));
         }
-
 
     }
 

@@ -52,7 +52,7 @@ class ExtraFeeControllerTest {
     }
     @Nested
     @DisplayName("When Find ExtraFee By Id")
-    class FindAdvertByIdTests {
+    class FindExtraFeeByIdTests {
         @Test
         void testFindExtraFeeById_ShouldReturnExtraFee() {
             when(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).thenReturn(extraFeeDTO);
@@ -75,7 +75,7 @@ class ExtraFeeControllerTest {
 
     @Nested
     @DisplayName("When Find All ExtraFees")
-    class FindAllAdvertsTests {
+    class FindAllExtraFeesTests {
 
         @Test
         void testFindAllExtraFees_shouldReturnAllExtraFees() {
@@ -100,7 +100,6 @@ class ExtraFeeControllerTest {
 
     }
 
-
     @Nested
     @DisplayName("When Create a ExtraFee")
     class CreateExtraFeeTests {
@@ -124,9 +123,10 @@ class ExtraFeeControllerTest {
         }
 
     }
+
     @Nested
     @DisplayName("When archive a ExtraFee")
-    class  EditAdvertTests {
+    class ArchiveExtraFeeTests {
         @Test
         void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
             when(extraFeeService.archiveExtraFee(EXTRA_FEE_ID)).thenReturn(archiveExtraFeeDTO);
