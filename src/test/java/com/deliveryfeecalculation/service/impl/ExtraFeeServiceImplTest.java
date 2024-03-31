@@ -137,7 +137,7 @@ class ExtraFeeServiceImplTest {
 
         @Test
         void testCreateExtraFee_shouldThrowException() {
-            extraFeeDTO=null;
+            extraFeeDTO = null;
             assertThrows(IllegalArgumentException.class,
                     () -> extraFeeService.createExtraFee(extraFeeDTO));
         }

@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class WeatherConditionRepositoryTest {
 
-
     @Autowired
     private WeatherConditionRepository weatherConditionRepository;
 
@@ -32,7 +31,6 @@ class WeatherConditionRepositoryTest {
 
     private WeatherCondition weatherConditionTwo;
     private static final long WEATHER_CONDITION_ID = 101L;
-
 
     private static final LocalDateTime OBSERVATION_TIME_2024 = LocalDateTime.of(2024, 3, 23, 20, 24);
 

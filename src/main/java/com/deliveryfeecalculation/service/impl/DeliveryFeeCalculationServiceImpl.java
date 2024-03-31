@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import static com.deliveryfeecalculation.constants.Constants.Messages.VEHICLE_FORBIDDEN;
 import static com.deliveryfeecalculation.constants.Constants.Messages.DELIVERY_FEE_CALCULATION;
 
@@ -58,7 +59,7 @@ public class DeliveryFeeCalculationServiceImpl implements DeliveryFeeCalculation
      * @param vehicleType the type of vehicle used for the delivery.
      * @return a {@link Response} containing the calculated delivery fee and a message detailing the calculation.
      * @throws ResourceNotFoundException if no weather condition or base fee can be found for the provided city and vehicle type.
-     * @throws ServiceException         if an unexpected error occurs during the calculation process.
+     * @throws ServiceException          if an unexpected error occurs during the calculation process.
      */
     @Override
     public Response deliveryFeeCalculate(final City city, final VehicleType vehicleType) {
