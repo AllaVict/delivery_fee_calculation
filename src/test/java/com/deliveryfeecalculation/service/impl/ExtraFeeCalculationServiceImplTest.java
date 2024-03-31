@@ -34,6 +34,7 @@ class ExtraFeeCalculationServiceImplTest {
         assertNotNull(result);
         assertEquals(response, result);
         assertThat(result.getFee()).isEqualTo(response.getFee());
+
     }
 
     @Test
@@ -45,6 +46,7 @@ class ExtraFeeCalculationServiceImplTest {
         assertNotNull(result);
         assertEquals(response, result);
         assertThat(result.getFee()).isEqualTo(response.getFee());
+
     }
 
     @Test
@@ -53,6 +55,7 @@ class ExtraFeeCalculationServiceImplTest {
         response = new Response();
         assertThrows(NullPointerException.class,
                 () -> extraFeeCalculationService.extraFeesCalculate(weatherCondition, BIKE));
+
     }
 
 }
