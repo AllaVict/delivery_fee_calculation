@@ -1,6 +1,5 @@
 package com.deliveryfeecalculation.factory;
 
-import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.enums.VehicleType;
@@ -15,7 +14,6 @@ import static com.deliveryfeecalculation.domain.enums.VehicleType.SCOOTER;
 
 public class ExtraFeeFactory {
 
-    private static TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeToExtraFeeDTO;
     private static final LocalDateTime CREATED_DATE = LocalDateTime.of(2024, 3, 23, 20, 24);
 
     private ExtraFeeFactory() {
