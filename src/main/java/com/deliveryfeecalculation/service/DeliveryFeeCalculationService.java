@@ -6,4 +6,5 @@ import com.deliveryfeecalculation.domain.model.Response;
 
 public interface DeliveryFeeCalculationService {
     Response deliveryFeeCalculate(City city, VehicleType vehicleType);
+
 }

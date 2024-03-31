@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface WeatherConditionService {
     List<WeatherCondition> saveWeatherCondition(List<Station> stationList);
+
 }
 
