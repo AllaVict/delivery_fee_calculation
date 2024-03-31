@@ -3,8 +3,8 @@ package com.deliveryfeecalculation.domain.model;
 import java.util.Objects;
 
 public class Response {
-    String message;
-    Double fee;
+    private String message;
+    private Double fee;
 
     public Response() {
     }

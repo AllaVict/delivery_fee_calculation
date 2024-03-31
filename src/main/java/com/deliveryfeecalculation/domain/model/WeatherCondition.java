@@ -15,19 +15,19 @@ public class WeatherCondition {
     private Long id;
     @Enumerated(EnumType.STRING)
     @Column(name = "station_name")
-    City stationName;
+    private City stationName;
 
     @Column(name = "air_temperature")
-    Double airTemperature;
+    private Double airTemperature;
 
     @Column(name = "wind_speed")
-    Double windSpeed;
+    private Double windSpeed;
 
     @Column(name = "weather_phenomenon")
-    String weatherPhenomenon;
+    private String weatherPhenomenon;
 
     @Column(name = "observation_time")
-    LocalDateTime observationTime;
+    private LocalDateTime observationTime;
 
     public WeatherCondition(final City stationName,
                             final Double airTemperature,
