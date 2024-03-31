@@ -1,11 +1,9 @@
 package com.deliveryfeecalculation.controller;
 
-import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
-import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
-import com.deliveryfeecalculation.repository.ExtraFeeRepository;
+import com.deliveryfeecalculation.service.ExtraFeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,11 +29,7 @@ import static org.mockito.Mockito.when;
 class ExtraFeeControllerTest {
 
     @Mock
-    private ExtraFeeRepository extraFeeRepository;
-    @Mock
-    private TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter;
-    @Mock
-    private TypeConverter<ExtraFee,ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter;
+    private ExtraFeeService extraFeeService;
     @InjectMocks
     private ExtraFeeController extraFeeController;
 
@@ -50,8 +43,7 @@ class ExtraFeeControllerTest {
 
     @BeforeEach
     public void setUp() {
-        extraFeeController= new ExtraFeeController(extraFeeRepository,
-                extraFeeDTOExtraFeeTypeConverter,extraFeeExtraFeeDTOTypeConverter);
+        extraFeeController= new ExtraFeeController(extraFeeService);
         extraFeeList = createExtraFeeList();
         extraFee = createExtraFeeWithData();
         archiveExtraFeeDTO =createExtraFeeDtoWithData();
@@ -63,8 +55,8 @@ class ExtraFeeControllerTest {
     class FindAdvertByIdTests {
         @Test
         void testFindExtraFeeById_ShouldReturnExtraFee() {
-            when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
-            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).thenReturn(extraFeeDTO);
+            when(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).thenReturn(extraFeeDTO);
+
             ResponseEntity<?> responseEntity = extraFeeController.findExtraFeeById(EXTRA_FEE_ID);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -73,6 +65,8 @@ class ExtraFeeControllerTest {
 
         @Test
         void testFindExtraFeeById_shouldThrowException() {
+            when(extraFeeService.findExtraFeeById(EXTRA_FEE_ID))
+                    .thenThrow(new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
 
             assertThrows(ResourceNotFoundException.class,
                     () ->extraFeeController.findExtraFeeById(EXTRA_FEE_ID));
@@ -85,8 +79,7 @@ class ExtraFeeControllerTest {
 
         @Test
         void testFindAllExtraFees_shouldReturnAllExtraFees() {
-            when(extraFeeRepository.findAll()).thenReturn(extraFeeList);
-            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList)).thenReturn(extraFeeDTOList);
+            when(extraFeeService.findAllExtraFees()).thenReturn(extraFeeDTOList);
 
             ResponseEntity<?> responseEntity = extraFeeController.getAllExtraFees();
 
@@ -96,9 +89,8 @@ class ExtraFeeControllerTest {
 
         @Test
         void testFindAllExtraFees_shouldThrowException() {
-            extraFeeRepository.deleteAll();
-            extraFeeList =new ArrayList<>();
-            when(extraFeeRepository.findAll()).thenReturn(extraFeeList);
+            extraFeeDTOList =new ArrayList<>();
+            when(extraFeeService.findAllExtraFees()).thenReturn(extraFeeDTOList);
 
             ResponseEntity<?> responseEntity = extraFeeController.getAllExtraFees();
 
@@ -114,13 +106,12 @@ class ExtraFeeControllerTest {
     class CreateExtraFeeTests {
         @Test
         void testCreateExtraFee_ShouldReturnExtraFee() {
-            when(extraFeeDTOExtraFeeTypeConverter.convert(extraFeeDTO)).thenReturn(extraFee);
-            when(extraFeeRepository.save(extraFee)).thenReturn(extraFee);
+            when(extraFeeService.createExtraFee(extraFeeDTO)).thenReturn(extraFeeDTO);
 
             ResponseEntity<?> responseEntity = extraFeeController.createExtraFee(extraFeeDTO);
 
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-            assertEquals(extraFee, responseEntity.getBody());
+            assertEquals(extraFeeDTO, responseEntity.getBody());
         }
 
         @Test
@@ -138,10 +129,7 @@ class ExtraFeeControllerTest {
     class  EditAdvertTests {
         @Test
         void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
-            when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
-            archiveExtraFeeDTO.setStatus(Status.ARCHIVE);
-            when(extraFeeRepository.save(extraFee)).thenReturn(extraFee);
-            when(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).thenReturn(archiveExtraFeeDTO);
+            when(extraFeeService.archiveExtraFee(EXTRA_FEE_ID)).thenReturn(archiveExtraFeeDTO);
 
             ResponseEntity<?> responseEntity = extraFeeController.archiveExtraFee(EXTRA_FEE_ID);
 
@@ -156,9 +144,9 @@ class ExtraFeeControllerTest {
     class DeleteExtraFeeTests {
         @Test
         void testDeleteExtraFee_shouldReturnExtraFee() {
-            doNothing().when(extraFeeRepository).deleteById(any(Long.class));
+            doNothing().when(extraFeeService).deleteExtraFeeById(any(Long.class));
 
-            ResponseEntity<?> responseEntity = extraFeeController.deleteExtraFee(EXTRA_FEE_ID);
+            ResponseEntity<?> responseEntity = extraFeeController.deleteExtraFeeById(EXTRA_FEE_ID);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             assertEquals("The ExtraFee has deleted successfully", responseEntity.getBody());

@@ -1,18 +1,13 @@
 package com.deliveryfeecalculation.controller;
 
-import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
-import com.deliveryfeecalculation.domain.enums.Status;
-import com.deliveryfeecalculation.domain.model.ExtraFee;
-import com.deliveryfeecalculation.exception.ResourceNotFoundException;
-import com.deliveryfeecalculation.repository.ExtraFeeRepository;
+import com.deliveryfeecalculation.service.ExtraFeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.EXTRA_FEE_URL;
@@ -29,19 +24,12 @@ public class ExtraFeeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtraFeeController.class);
 
-    private final ExtraFeeRepository extraFeeRepository;
+    private final ExtraFeeService extraFeeService;
 
-    private final TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter;
-
-    private final TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter;
-
-    public ExtraFeeController(final ExtraFeeRepository extraFeeRepository,
-                              final TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter,
-                              final TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter) {
-        this.extraFeeRepository = extraFeeRepository;
-        this.extraFeeDTOExtraFeeTypeConverter = extraFeeDTOExtraFeeTypeConverter;
-        this.extraFeeExtraFeeDTOTypeConverter = extraFeeExtraFeeDTOTypeConverter;
+    public ExtraFeeController(final ExtraFeeService extraFeeService) {
+        this.extraFeeService = extraFeeService;
     }
+
 
     /**
      * Creates a new ExtraFee entity based on the provided ExtraFeeDTO.
@@ -55,10 +43,7 @@ public class ExtraFeeController {
         if (extraFeeDto == null || extraFeeDto.getName() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please fill all fields");
 
-        extraFeeDto.setCreatedDate(LocalDateTime.now());
-        final ExtraFee extraFeeToSave = extraFeeDTOExtraFeeTypeConverter.convert(extraFeeDto);
-
-        final ExtraFee savedExtraFee = extraFeeRepository.save(extraFeeToSave);
+        final ExtraFeeDTO savedExtraFee = extraFeeService.createExtraFee(extraFeeDto);
 
         LOGGER.debug("In createExtraFee received POST extraFee save successfully with id {} ", savedExtraFee);
 
@@ -76,13 +61,7 @@ public class ExtraFeeController {
         if (extraFeeId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert ExtraFee id");
 
-        final ExtraFee extraFeeToUpdate = extraFeeRepository.findById(extraFeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("ExtraFee not found for id: " + extraFeeId));
-
-        extraFeeToUpdate.setStatus(Status.ARCHIVE);
-        final ExtraFee archivedExtraFee = extraFeeRepository.save(extraFeeToUpdate);
-
-        final ExtraFeeDTO archivedExtraFeeDto = extraFeeExtraFeeDTOTypeConverter.convert(archivedExtraFee);
+       final ExtraFeeDTO archivedExtraFeeDto = extraFeeService.archiveExtraFee(extraFeeId);
 
         LOGGER.debug("In archiveExtraFee received PUT extraFee archive successfully with id {} ", archivedExtraFeeDto.getId());
 
@@ -98,12 +77,9 @@ public class ExtraFeeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findExtraFeeById(@PathVariable("id") final Long extraFeeId) {
 
-        final ExtraFee foundExtraFee = extraFeeRepository.findById(extraFeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("ExtraFee not found for id: " + extraFeeId));
+        final ExtraFeeDTO foundExtraFeeDto = extraFeeService.findExtraFeeById(extraFeeId);
 
-        final ExtraFeeDTO foundExtraFeeDto = extraFeeExtraFeeDTOTypeConverter.convert(foundExtraFee);
-
-        LOGGER.debug("In findExtraFeeById received GET extraFee find successfully with id {} ", foundExtraFeeDto.getId());
+        LOGGER.debug("In findExtraFeeById received GET extraFee find successfully with id {} ", extraFeeId);
 
         return ResponseEntity.status(HttpStatus.OK).body(foundExtraFeeDto);
     }
@@ -116,11 +92,10 @@ public class ExtraFeeController {
     @GetMapping()
     public ResponseEntity<?> getAllExtraFees() {
 
-        final List<ExtraFee> extraFeeList = extraFeeRepository.findAll();
-        if (extraFeeList.isEmpty()) {
+        final List<ExtraFeeDTO> extraFeeDTOList = extraFeeService.findAllExtraFees();
+        if (extraFeeDTOList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Empty list");
         }
-        final List<ExtraFeeDTO> extraFeeDTOList = extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList);
 
         LOGGER.debug("In getAllExtraFees received GET get all ExtraFees successfully {} ", extraFeeDTOList);
 
@@ -134,9 +109,9 @@ public class ExtraFeeController {
      * @return A {@link ResponseEntity} confirming the deletion or a bad request error if the ID is null.
      */
     @DeleteMapping("/{Id}")
-    public ResponseEntity<?> deleteExtraFee(@PathVariable("Id") Long extraFeeId) {
+    public ResponseEntity<?> deleteExtraFeeById(@PathVariable("Id") Long extraFeeId) {
 
-        extraFeeRepository.deleteById(extraFeeId);
+        extraFeeService.deleteExtraFeeById(extraFeeId);
 
         LOGGER.debug("In deleteExtraFee received DELETE ExtraFee delete successfully with id {} ", extraFeeId);
 

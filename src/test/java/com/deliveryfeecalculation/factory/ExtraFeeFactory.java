@@ -41,9 +41,7 @@ public class ExtraFeeFactory {
 
     public static List<ExtraFee> createAirExtraFeeList() {
         final List<ExtraFee> extraFeeList = Arrays.asList(
-                createExtraFee(100L, "air temperature", SCOOTER, 1.00, -10.0, null, null, false, Status.CURRENT, CREATED_DATE),
                 createExtraFee(101L, "air temperature", BIKE, 1.00, -10.0, null, null, false, Status.CURRENT, CREATED_DATE),
-                createExtraFee(102L, "air temperature", SCOOTER, 0.50, -10.0, 0.0, null, false, Status.CURRENT, CREATED_DATE),
                 createExtraFee(103L, "air temperature", BIKE, 0.50, -10.0, 0.0, null, false, Status.CURRENT, CREATED_DATE)
         );
         return extraFeeList;
