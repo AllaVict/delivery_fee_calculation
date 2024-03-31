@@ -15,6 +15,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for managing extra fees.
+ * Provides operations to create, archive, find, and delete extra fees, as well as to retrieve all existing extra fees.
+ * Each operation is designed to manipulate the ExtraFee records in the database through a defined API,
+ * ensuring data integrity and consistent access patterns.
+ *
+ * @author Alla Borodina
+ */
 @Service
 public class ExtraFeeServiceImpl implements ExtraFeeService {
 
@@ -27,13 +35,20 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
     private final TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter;
 
     public ExtraFeeServiceImpl(final ExtraFeeRepository extraFeeRepository,
-                              final TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter,
-                              final TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter) {
+                               final TypeConverter<ExtraFeeDTO, ExtraFee> extraFeeDTOExtraFeeTypeConverter,
+                               final TypeConverter<ExtraFee, ExtraFeeDTO> extraFeeExtraFeeDTOTypeConverter) {
         this.extraFeeRepository = extraFeeRepository;
         this.extraFeeDTOExtraFeeTypeConverter = extraFeeDTOExtraFeeTypeConverter;
         this.extraFeeExtraFeeDTOTypeConverter = extraFeeExtraFeeDTOTypeConverter;
     }
 
+    /**
+     * Creates a new ExtraFee record based on the provided ExtraFeeDTO.
+     *
+     * @param extraFeeDTO the data transfer object containing the details of the extra fee to be created
+     * @return an ExtraFeeDTO representing the created extra fee
+     * @throws IllegalArgumentException if the extraFeeDTO is null
+     */
     @Override
     public ExtraFeeDTO createExtraFee(ExtraFeeDTO extraFeeDTO) {
         if (extraFeeDTO == null)
@@ -49,6 +64,35 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
         return extraFeeExtraFeeDTOTypeConverter.convert(savedExtraFee);
     }
 
+    /**
+     * Archives an existing extra fee by its ID.
+     *
+     * @param extraFeeId the ID of the extra fee to be archived
+     * @return an ExtraFeeDTO representing the archived extra fee
+     * @throws ResourceNotFoundException if no extra fee is found for the given ID
+     */
+    @Override
+    public ExtraFeeDTO archiveExtraFee(final Long extraFeeId) {
+
+        final ExtraFee extraFeeToArchive = extraFeeRepository.findById(extraFeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("ExtraFee not found for id: " + extraFeeId));
+
+        extraFeeToArchive.setStatus(Status.ARCHIVE);
+        final ExtraFee archivedExtraFee = extraFeeRepository.saveAndFlush(extraFeeToArchive);
+        final ExtraFeeDTO archivedExtraFeeDto = extraFeeExtraFeeDTOTypeConverter.convert(archivedExtraFee);
+
+        LOGGER.debug("In archiveExtraFee extraFee archive successfully with id {} ", archivedExtraFeeDto.getId());
+
+        return archivedExtraFeeDto;
+    }
+
+    /**
+     * Retrieves an extra fee by its ID.
+     *
+     * @param extraFeeId the ID of the extra fee to retrieve
+     * @return an ExtraFeeDTO representing the found extra fee
+     * @throws ResourceNotFoundException if no extra fee is found for the given ID
+     */
     @Override
     public ExtraFeeDTO findExtraFeeById(Long extraFeeId) {
         final ExtraFee foundExtraFee = extraFeeRepository.findById(extraFeeId)
@@ -57,9 +101,14 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
         final ExtraFeeDTO foundExtraFeeDto = extraFeeExtraFeeDTOTypeConverter.convert(foundExtraFee);
 
         LOGGER.debug("In findExtraFeeById find extraFee successfully with id {} ", foundExtraFeeDto.getId());
-         return foundExtraFeeDto;
+        return foundExtraFeeDto;
     }
 
+    /**
+     * Retrieves all extra fees.
+     *
+     * @return a list of ExtraFeeDTOs representing all stored extra fees
+     */
     @Override
     public List<ExtraFeeDTO> findAllExtraFees() {
 
@@ -73,25 +122,16 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
 
     }
 
-    @Override
-    public ExtraFeeDTO archiveExtraFee(final Long extraFeeId) {
-
-        final ExtraFee extraFeeToArchive = extraFeeRepository.findById(extraFeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("ExtraFee not found for id: " + extraFeeId));
-
-        extraFeeToArchive.setStatus(Status.ARCHIVE);
-        final ExtraFee archivedExtraFee = extraFeeRepository.saveAndFlush(extraFeeToArchive);
-        final ExtraFeeDTO archivedExtraFeeDto = extraFeeExtraFeeDTOTypeConverter.convert(archivedExtraFee);
-
-        LOGGER.debug("In archiveExtraFee extraFee archive successfully with id {} ", archivedExtraFeeDto.getId());
-
-        return  archivedExtraFeeDto;
-    }
-
+    /**
+     * Deletes an extra fee by its ID.
+     *
+     * @param extraFeeId the ID of the extra fee to be deleted
+     * @throws ResourceNotFoundException if no extra fee is found for the given ID
+     */
     @Override
     public void deleteExtraFeeById(Long extraFeeId) {
         Optional<ExtraFee> extraFeeToDelete = extraFeeRepository.findById(extraFeeId);
-        if(extraFeeToDelete.isEmpty())
+        if (extraFeeToDelete.isEmpty())
             extraFeeToDelete
                     .orElseThrow(() -> new ResourceNotFoundException("ExtraFee not found for id: " + extraFeeId));
 
