@@ -1,7 +1,9 @@
 package com.deliveryfeecalculation.controller;
 
 import com.deliveryfeecalculation.domain.dto.BaseFeeDTO;
+import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.model.BaseFee;
+import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.service.BaseFeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,143 +24,160 @@ import static com.deliveryfeecalculation.factory.BaseFeeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-    @ExtendWith(MockitoExtension.class)
-    @DisplayName("BaseFeeController")
-    class BaseFeeControllerTest {
+@ExtendWith(MockitoExtension.class)
+@DisplayName("BaseFeeController")
+class BaseFeeControllerTest {
 
-        @Mock
-        private BaseFeeService baseFeeService;
-        @InjectMocks
-        private BaseFeeController baseFeeController;
+    @Mock
+    private BaseFeeService baseFeeService;
+    @InjectMocks
+    private BaseFeeController baseFeeController;
 
-        private static final long BASE_FEE_ID = 101L;
+    private static final long BASE_FEE_ID = 101L;
 
-        private List<BaseFee> baseFeeList;
-        private List<BaseFeeDTO> baseFeeDTOList;
-        private BaseFee baseFee;
-        private BaseFeeDTO archiveBaseFeeDTO;
-        private BaseFeeDTO baseFeeDTO;
+    private List<BaseFee> baseFeeList;
+    private List<BaseFeeDTO> baseFeeDTOList;
+    private BaseFee baseFee;
+    private BaseFeeDTO archiveBaseFeeDTO;
+    private BaseFeeDTO baseFeeDTO;
 
-        @BeforeEach
-        public void setUp() {
-            baseFeeController = new BaseFeeController(baseFeeService);
-            baseFeeList = createBaseFeeList();
-            baseFee = createBaseFee();
-            archiveBaseFeeDTO = createBaseFeeDto();
-            baseFeeDTO = createBaseFeeDto();
-            baseFeeDTOList = createBaseFeeDtoList();
+    @BeforeEach
+    public void setUp() {
+        baseFeeController = new BaseFeeController(baseFeeService);
+        baseFeeList = createBaseFeeList();
+        baseFee = createBaseFee();
+        archiveBaseFeeDTO = createBaseFeeDto();
+        baseFeeDTO = createBaseFeeDto();
+        baseFeeDTOList = createBaseFeeDtoList();
 
+    }
+
+    @Nested
+    @DisplayName("When Create a BaseFee")
+    class CreateBaseFeeTests {
+        @Test
+        void testCreateBaseFee_ShouldReturnBaseFee() {
+            when(baseFeeService.createBaseFee(baseFeeDTO)).thenReturn(baseFeeDTO);
+
+            ResponseEntity<?> responseEntity = baseFeeController.createBaseFee(baseFeeDTO);
+
+            assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+            assertEquals(baseFeeDTO, responseEntity.getBody());
         }
 
-        @Nested
-        @DisplayName("When Find BaseFee By Id")
-        class FindExtraFeeByIdTests {
-            @Test
-            void testFindExtraFeeById_ShouldReturnExtraFee() {
-                when(baseFeeService.findBaseFeeById(BASE_FEE_ID)).thenReturn(baseFeeDTO);
+        @Test
+        void testCreateBaseFee_ShouldReturn400Status_WhenInvalidRequest() {
+            baseFee = new BaseFee();
+            baseFeeDTO = new BaseFeeDTO();
+            ResponseEntity<?> responseEntity = baseFeeController.createBaseFee(baseFeeDTO);
 
-                ResponseEntity<?> responseEntity = baseFeeController.findBaseFeeById(BASE_FEE_ID);
-
-                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-                assertEquals(baseFeeDTO, responseEntity.getBody());
-
-            }
-
-            @Test
-            void testFindExtraFeeById_shouldThrowException() {
-                when(baseFeeService.findBaseFeeById(BASE_FEE_ID))
-                        .thenThrow(new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
-
-                ResponseEntity<?> responseEntity = baseFeeController.findBaseFeeById(BASE_FEE_ID);
-
-                assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-            }
-
-        }
-
-        @Nested
-        @DisplayName("When Find All BaseFees")
-        class FindAllExtraFeesTests {
-
-            @Test
-            void testFindAllExtraFees_shouldReturnAllExtraFees() {
-                when(baseFeeService.findAllBaseFees()).thenReturn(baseFeeDTOList);
-
-                ResponseEntity<?> responseEntity = baseFeeController.findAllBaseFees();
-
-                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-                assertEquals(baseFeeDTOList, responseEntity.getBody());
-
-            }
-
-            @Test
-            void testFindAllExtraFees_shouldThrowException() {
-                baseFeeDTOList = new ArrayList<>();
-                when(baseFeeService.findAllBaseFees()).thenReturn(baseFeeDTOList);
-
-                ResponseEntity<?> responseEntity = baseFeeController.findAllBaseFees();
-
-                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-
-            }
-
-        }
-
-        @Nested
-        @DisplayName("When Create a BaseFee")
-        class CreateExtraFeeTests {
-            @Test
-            void testCreateExtraFee_ShouldReturnExtraFee() {
-                when(baseFeeService.createBaseFee(baseFeeDTO)).thenReturn(baseFeeDTO);
-
-                ResponseEntity<?> responseEntity = baseFeeController.createBaseFee(baseFeeDTO);
-
-                assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-                assertEquals(baseFeeDTO, responseEntity.getBody());
-            }
-
-            @Test
-            void testCreateExtraFee_InvalidData() {
-                baseFee = new BaseFee();
-                baseFeeDTO = new BaseFeeDTO();
-                ResponseEntity<?> responseEntity = baseFeeController.createBaseFee(baseFeeDTO);
-
-                assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-            }
-
-        }
-
-        @Nested
-        @DisplayName("When archive a BaseFee")
-        class ArchiveExtraFeeTests {
-            @Test
-            void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
-                when(baseFeeService.archiveBaseFee(BASE_FEE_ID)).thenReturn(archiveBaseFeeDTO);
-
-                ResponseEntity<?> responseEntity = baseFeeController.archiveBaseFee(BASE_FEE_ID);
-
-                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-                assertEquals(archiveBaseFeeDTO, responseEntity.getBody());
-            }
-
-        }
-
-        @Nested
-        @DisplayName("When Delete a BaseFee")
-        class DeleteExtraFeeTests {
-            @Test
-            void testDeleteExtraFee_shouldReturnExtraFee() {
-                doNothing().when(baseFeeService).deleteBaseFeeById(any(Long.class));
-
-                ResponseEntity<?> responseEntity = baseFeeController.deleteBaseFeeById(BASE_FEE_ID);
-
-                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-                assertEquals("The BaseFee has deleted successfully", responseEntity.getBody());
-            }
-
+            assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         }
 
     }
+
+    @Nested
+    @DisplayName("When archive a BaseFee")
+    class ArchiveBaseFeeTests {
+        @Test
+        void testArchiveBaseFee_ShouldReturnBaseFeeWithArchiveStatus() {
+            when(baseFeeService.archiveBaseFee(BASE_FEE_ID)).thenReturn(archiveBaseFeeDTO);
+
+            ResponseEntity<?> responseEntity = baseFeeController.archiveBaseFee(BASE_FEE_ID);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(archiveBaseFeeDTO, responseEntity.getBody());
+        }
+
+        @Test
+        void testArchiveBaseFee_ShouldnReturn400Status_WhenInvalidRequest() {
+
+            ResponseEntity<?> responseEntity = baseFeeController.archiveBaseFee(null);
+
+            assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("When Find BaseFee By Id")
+    class FindBaseFeeByIdTests {
+        @Test
+        void testFindBaseFeeById_ShouldReturnBaseFee() {
+            when(baseFeeService.findBaseFeeById(BASE_FEE_ID)).thenReturn(baseFeeDTO);
+
+            ResponseEntity<?> responseEntity = baseFeeController.findBaseFeeById(BASE_FEE_ID);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(baseFeeDTO, responseEntity.getBody());
+
+        }
+
+        @Test
+        void testFindBaseFeeById_ShouldReturn404Status_WhenBaseFeeDoesNotExist() {
+            when(baseFeeService.findBaseFeeById(BASE_FEE_ID))
+                    .thenThrow(new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
+
+            ResponseEntity<?> responseEntity = baseFeeController.findBaseFeeById(BASE_FEE_ID);
+
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("When Find All BaseFees")
+    class FindAllBaseFeesTests {
+
+        @Test
+        void testFindAllBaseFees_ShouldReturnAllBaseFees() {
+            when(baseFeeService.findAllBaseFees()).thenReturn(baseFeeDTOList);
+
+            ResponseEntity<?> responseEntity = baseFeeController.findAllBaseFees();
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(baseFeeDTOList, responseEntity.getBody());
+
+        }
+
+        @Test
+        void testFindAllBaseFees_ShouldReturn200Status_WhenReturnEmptyList() {
+            baseFeeDTOList = new ArrayList<>();
+            when(baseFeeService.findAllBaseFees()).thenReturn(baseFeeDTOList);
+
+            ResponseEntity<?> responseEntity = baseFeeController.findAllBaseFees();
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(baseFeeDTOList, responseEntity.getBody());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("When Delete a BaseFee")
+    class DeleteBaseFeeTests {
+        @Test
+        void testDeleteBaseFee_ShouldReturnBaseFee() {
+            doNothing().when(baseFeeService).deleteBaseFeeById(any(Long.class));
+
+            ResponseEntity<?> responseEntity = baseFeeController.deleteBaseFeeById(BASE_FEE_ID);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals("The BaseFee has deleted successfully", responseEntity.getBody());
+        }
+
+        @Test
+        void testDeleteBaseFee_ShouldnReturn404Status_WhenBaseFeeDoesNotExist() {
+            doThrow(new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID))
+                    .when(baseFeeService).deleteBaseFeeById(any(Long.class));
+
+            ResponseEntity<?> responseEntity = baseFeeController.deleteBaseFeeById(BASE_FEE_ID);
+
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        }
+
+    }
+
+}

@@ -84,7 +84,7 @@ class BaseFeeServiceImplTest {
         }
 
         @Test
-        void testFindBaseFeeById_shouldThrowException() {
+        void testFindBaseFeeById_ShouldThrowException() {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> baseFeeService.findBaseFeeById(BASE_FEE_ID));
@@ -97,7 +97,7 @@ class BaseFeeServiceImplTest {
     class FindAllBaseFeesTests {
 
         @Test
-        void testFindAllBaseFees_shouldReturnAllBaseFees() {
+        void testFindAllBaseFees_ShouldReturnAllBaseFees() {
             when(baseFeeRepository.findAll()).thenReturn(baseFeeList);
             when(baseFeeBaseFeeDTOTypeConverter.convert(baseFeeList)).thenReturn(baseFeeDTOList);
 
@@ -108,7 +108,7 @@ class BaseFeeServiceImplTest {
         }
 
         @Test
-        void testFindAllBaseFees_shouldThrowException() {
+        void testFindAllBaseFees_ShouldReturnEmptyList() {
             baseFeeRepository.deleteAll();
             baseFeeDTOList = new ArrayList<>();
             baseFeeList = new ArrayList<>();
@@ -119,7 +119,7 @@ class BaseFeeServiceImplTest {
             verify(baseFeeRepository).findAll();
             assertNotNull(result);
             assertEquals(result, baseFeeDTOList);
-            Assertions.assertThat(result.size()).isEqualTo(baseFeeDTOList.size());
+            assertTrue(result.isEmpty());
 
         }
 
@@ -182,9 +182,9 @@ class BaseFeeServiceImplTest {
 
     @Nested
     @DisplayName("When Delete a BaseFee")
-    class DeleteExtraFeeTests {
+    class DeleteBaseFeeTests {
         @Test
-        void testDeleteBaseFee_shouldReturnExtraFee() {
+        void testDeleteBaseFee_shouldReturnBaseFee() {
             when(baseFeeRepository.findById(BASE_FEE_ID)).thenReturn(Optional.of(baseFee));
             baseFeeService.deleteBaseFeeById(BASE_FEE_ID);
             verify(baseFeeRepository, times(1)).delete(baseFee);
