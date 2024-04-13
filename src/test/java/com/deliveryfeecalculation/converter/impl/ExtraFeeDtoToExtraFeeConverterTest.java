@@ -8,27 +8,28 @@ import org.junit.jupiter.api.Test;
 
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.createExtraFeeDtoWithData;
 import static org.junit.jupiter.api.Assertions.*;
+
 @DisplayName("ExtraFeeDtoToExtraFeeConverter")
 class ExtraFeeDtoToExtraFeeConverterTest {
 
-        private ExtraFeeDtoToExtraFeeConverter converter = new ExtraFeeDtoToExtraFeeConverter();
+    private ExtraFeeDtoToExtraFeeConverter converter = new ExtraFeeDtoToExtraFeeConverter();
 
-        private ExtraFeeDTO extraFeeDTO;
+    private ExtraFeeDTO extraFeeDTO;
 
-        @BeforeEach
-        public void setUp() {
-            extraFeeDTO = createExtraFeeDtoWithData();
-        }
+    @BeforeEach
+    public void setUp() {
+        extraFeeDTO = createExtraFeeDtoWithData();
+    }
 
-        @Test
-        void shouldGetTargetClass() {
-            assertEquals(ExtraFee.class, converter.getTargetClass());
-        }
+    @Test
+    void shouldGetTargetClass() {
+        assertEquals(ExtraFee.class, converter.getTargetClass());
+    }
 
-        @Test
-        void shouldGetSourceClass() {
-            assertEquals(ExtraFeeDTO.class, converter.getSourceClass());
-        }
+    @Test
+    void shouldGetSourceClass() {
+        assertEquals(ExtraFeeDTO.class, converter.getSourceClass());
+    }
 
     @Test
     void testConvert_shouldConvertExtraFeeDToExtraFee() {
@@ -38,4 +39,4 @@ class ExtraFeeDtoToExtraFeeConverterTest {
         assertEquals(extraFeeDTO.getName(), result.getName());
         assertEquals(extraFeeDTO.getStatus(), result.getStatus());
     }
-    }
+}

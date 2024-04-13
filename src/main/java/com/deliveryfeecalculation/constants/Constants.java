@@ -15,6 +15,8 @@ public final class Constants {
         public static final String FEE_URL = "/fee";
         public static final String EXTRA_FEE_URL = "/extra_fee";
 
+        public static final String BASE_FEE_URL = "/base_fee";
+
         private Endpoints() {
         }
     }
