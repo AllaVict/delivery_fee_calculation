@@ -121,7 +121,7 @@ class BaseFeeControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(baseFeeDTOList)))
                     .andDo(print())
-                    .andExpect(status().isNotFound());
+                    .andExpect(status().isOk());
 
         }
     }

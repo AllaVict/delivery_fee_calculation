@@ -4,6 +4,7 @@ import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
+import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.repository.ExtraFeeRepository;
 import org.assertj.core.api.Assertions;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.deliveryfeecalculation.domain.enums.Status.CURRENT;
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -131,6 +133,7 @@ class ExtraFeeServiceImplTest {
 
             assertEquals(extraFeeDTO, result);
             assertThat(result.getName()).isEqualTo(extraFeeDTO.getName());
+            assertThat(result.getStatus()).isEqualTo(CURRENT);
             verify(extraFeeRepository).saveAndFlush(any(ExtraFee.class));
             assertNotNull(result);
         }
@@ -138,7 +141,7 @@ class ExtraFeeServiceImplTest {
         @Test
         void testCreateExtraFee_shouldThrowException() {
             extraFeeDTO = null;
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(FeeCreationException.class,
                     () -> extraFeeService.createExtraFee(extraFeeDTO));
         }
     }

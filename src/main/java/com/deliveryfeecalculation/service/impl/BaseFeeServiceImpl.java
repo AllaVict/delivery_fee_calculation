@@ -4,6 +4,7 @@ import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.BaseFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.BaseFee;
+import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.repository.BaseFeeRepository;
 import com.deliveryfeecalculation.service.BaseFeeService;
@@ -47,14 +48,15 @@ public class BaseFeeServiceImpl implements BaseFeeService {
          *
          * @param baseFeeDTO the data transfer object containing the details of the base fee to be created
          * @return an BaseFeeDTO representing the created base fee
-         * @throws IllegalArgumentException if the baseFeeDTO is null
+         * @throws FeeCreationException if the baseFeeDTO is null
          */
         @Override
         public BaseFeeDTO createBaseFee(BaseFeeDTO baseFeeDTO) {
             if (baseFeeDTO == null)
-                throw new IllegalArgumentException("baseFeeDTO cannot be null");
+                throw new FeeCreationException("baseFeeDTO cannot be null");
 
             baseFeeDTO.setCreatedDate(LocalDateTime.now());
+            baseFeeDTO.setStatus(Status.CURRENT);
             final BaseFee baseFeeToSave = baseFeeDTOBaseFeeTypeConverter.convert(baseFeeDTO);
 
             final BaseFee savedBaseFee = baseFeeRepository.saveAndFlush(baseFeeToSave);

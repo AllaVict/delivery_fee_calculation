@@ -97,7 +97,7 @@ class ExtraFeeControllerIntegrationTest {
 
     @Nested
     @DisplayName("When Find All ExtraFees")
-    class FindAllAdvertsTests {
+    class FindAllExtraFeesTests {
 
         @Test
         void testFindAllExtraFees_shouldReturnAllExtraFees() throws Exception {
@@ -120,7 +120,7 @@ class ExtraFeeControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(extraFeeDTOList)))
                     .andDo(print())
-                    .andExpect(status().isNotFound());
+                    .andExpect(status().isOk());
 
         }
     }
@@ -156,7 +156,7 @@ class ExtraFeeControllerIntegrationTest {
 
     @Nested
     @DisplayName("When archive a ExtraFee")
-    class EditAdvertTests {
+    class EditExtraFeeTests {
         @Test
         void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() throws Exception {
             given(extraFeeService.archiveExtraFee(EXTRA_FEE_ID)).willReturn(extraFeeDTO);

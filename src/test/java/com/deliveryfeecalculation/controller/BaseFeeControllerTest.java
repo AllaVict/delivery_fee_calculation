@@ -21,6 +21,7 @@ import java.util.List;
 import static com.deliveryfeecalculation.factory.BaseFeeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -71,8 +72,9 @@ import static org.mockito.Mockito.when;
                 when(baseFeeService.findBaseFeeById(BASE_FEE_ID))
                         .thenThrow(new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
 
-                assertThrows(ResourceNotFoundException.class,
-                        () -> baseFeeController.findBaseFeeById(BASE_FEE_ID));
+                ResponseEntity<?> responseEntity = baseFeeController.findBaseFeeById(BASE_FEE_ID);
+
+                assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
             }
 
         }
@@ -99,7 +101,7 @@ import static org.mockito.Mockito.when;
 
                 ResponseEntity<?> responseEntity = baseFeeController.findAllBaseFees();
 
-                assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+                assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
             }
 

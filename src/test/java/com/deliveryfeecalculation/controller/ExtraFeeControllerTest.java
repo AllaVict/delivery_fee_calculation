@@ -71,8 +71,9 @@ class ExtraFeeControllerTest {
             when(extraFeeService.findExtraFeeById(EXTRA_FEE_ID))
                     .thenThrow(new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
 
-            assertThrows(ResourceNotFoundException.class,
-                    () -> extraFeeController.findExtraFeeById(EXTRA_FEE_ID));
+            ResponseEntity<?> responseEntity = extraFeeController.findExtraFeeById(EXTRA_FEE_ID);
+
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         }
 
     }
@@ -99,7 +100,7 @@ class ExtraFeeControllerTest {
 
             ResponseEntity<?> responseEntity = extraFeeController.getAllExtraFees();
 
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         }
 
