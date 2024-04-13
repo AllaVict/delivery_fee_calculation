@@ -1,9 +1,7 @@
 package com.deliveryfeecalculation.controller;
 
 import com.deliveryfeecalculation.domain.dto.BaseFeeDTO;
-import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.model.BaseFee;
-import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.service.BaseFeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +21,6 @@ import java.util.List;
 import static com.deliveryfeecalculation.factory.BaseFeeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

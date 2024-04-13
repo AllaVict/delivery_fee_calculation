@@ -2,7 +2,6 @@ package com.deliveryfeecalculation.service.impl;
 
 import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
-import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
 import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;

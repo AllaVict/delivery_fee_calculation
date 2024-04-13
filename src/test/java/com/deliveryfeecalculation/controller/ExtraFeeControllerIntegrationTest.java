@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.deliveryfeecalculation.constants.Constants.Endpoints.BASE_FEE_URL;
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.EXTRA_FEE_URL;
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.hamcrest.Matchers.containsString;

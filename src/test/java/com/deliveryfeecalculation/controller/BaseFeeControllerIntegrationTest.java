@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.deliveryfeecalculation.constants.Constants.Endpoints.BASE_FEE_URL;
-import static com.deliveryfeecalculation.constants.Constants.Endpoints.EXTRA_FEE_URL;
 import static com.deliveryfeecalculation.factory.BaseFeeFactory.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
