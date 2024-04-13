@@ -137,7 +137,7 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
 
         extraFeeRepository.delete(extraFeeToDelete.orElseThrow());
 
-        LOGGER.debug("In deleteComment Deleting success Comment with id {}", extraFeeId);
+        LOGGER.debug("In deleteComment Deleting success ExtraFee with id {}", extraFeeId);
     }
 
 }

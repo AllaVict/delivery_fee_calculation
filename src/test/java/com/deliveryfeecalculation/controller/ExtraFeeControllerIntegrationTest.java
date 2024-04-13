@@ -68,7 +68,7 @@ class ExtraFeeControllerIntegrationTest {
 
     @Nested
     @DisplayName("When Find ExtraFee By Id")
-    class FindAdvertByIdTests {
+    class FindExtraFeeByIdTests {
         @Test
         void testFindExtraFeeById_ShouldReturnExtraFee() throws Exception {
             given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willReturn(extraFeeDTO);
