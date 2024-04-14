@@ -2,10 +2,9 @@ package com.deliveryfeecalculation.service.impl;
 
 import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.BaseFeeDTO;
-import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.BaseFee;
-import com.deliveryfeecalculation.domain.model.ExtraFee;
+import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.repository.BaseFeeRepository;
 import org.assertj.core.api.Assertions;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.deliveryfeecalculation.domain.enums.Status.CURRENT;
 import static com.deliveryfeecalculation.factory.BaseFeeFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,7 +82,7 @@ class BaseFeeServiceImplTest {
         }
 
         @Test
-        void testFindBaseFeeById_shouldThrowException() {
+        void testFindBaseFeeById_ShouldThrowException() {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> baseFeeService.findBaseFeeById(BASE_FEE_ID));
@@ -95,7 +95,7 @@ class BaseFeeServiceImplTest {
     class FindAllBaseFeesTests {
 
         @Test
-        void testFindAllBaseFees_shouldReturnAllBaseFees() {
+        void testFindAllBaseFees_ShouldReturnAllBaseFees() {
             when(baseFeeRepository.findAll()).thenReturn(baseFeeList);
             when(baseFeeBaseFeeDTOTypeConverter.convert(baseFeeList)).thenReturn(baseFeeDTOList);
 
@@ -106,7 +106,7 @@ class BaseFeeServiceImplTest {
         }
 
         @Test
-        void testFindAllBaseFees_shouldThrowException() {
+        void testFindAllBaseFees_ShouldReturnEmptyList() {
             baseFeeRepository.deleteAll();
             baseFeeDTOList = new ArrayList<>();
             baseFeeList = new ArrayList<>();
@@ -117,7 +117,7 @@ class BaseFeeServiceImplTest {
             verify(baseFeeRepository).findAll();
             assertNotNull(result);
             assertEquals(result, baseFeeDTOList);
-            Assertions.assertThat(result.size()).isEqualTo(baseFeeDTOList.size());
+            assertTrue(result.isEmpty());
 
         }
 
@@ -136,6 +136,7 @@ class BaseFeeServiceImplTest {
 
             assertEquals(baseFeeDTO, result);
             assertThat(result.getCity()).isEqualTo(baseFeeDTO.getCity());
+            assertThat(result.getStatus()).isEqualTo(CURRENT);
             verify(baseFeeRepository).saveAndFlush(any(BaseFee.class));
             assertNotNull(result);
         }
@@ -143,7 +144,7 @@ class BaseFeeServiceImplTest {
         @Test
         void testCreateBaseFee_shouldThrowException() {
             baseFeeDTO = null;
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(FeeCreationException.class,
                     () -> baseFeeService.createBaseFee(baseFeeDTO));
         }
     }
@@ -179,9 +180,9 @@ class BaseFeeServiceImplTest {
 
     @Nested
     @DisplayName("When Delete a BaseFee")
-    class DeleteExtraFeeTests {
+    class DeleteBaseFeeTests {
         @Test
-        void testDeleteBaseFee_shouldReturnExtraFee() {
+        void testDeleteBaseFee_shouldReturnBaseFee() {
             when(baseFeeRepository.findById(BASE_FEE_ID)).thenReturn(Optional.of(baseFee));
             baseFeeService.deleteBaseFeeById(BASE_FEE_ID);
             verify(baseFeeRepository, times(1)).delete(baseFee);

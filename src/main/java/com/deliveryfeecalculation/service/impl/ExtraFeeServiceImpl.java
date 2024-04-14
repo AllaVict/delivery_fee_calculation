@@ -4,6 +4,7 @@ import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
 import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
+import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.repository.ExtraFeeRepository;
 import com.deliveryfeecalculation.service.ExtraFeeService;
@@ -52,9 +53,10 @@ public class ExtraFeeServiceImpl implements ExtraFeeService {
     @Override
     public ExtraFeeDTO createExtraFee(ExtraFeeDTO extraFeeDTO) {
         if (extraFeeDTO == null)
-            throw new IllegalArgumentException("extraFeeDTO cannot be null");
+            throw new FeeCreationException("extraFeeDTO cannot be null");
 
         extraFeeDTO.setCreatedDate(LocalDateTime.now());
+        extraFeeDTO.setStatus(Status.CURRENT);
         final ExtraFee extraFeeToSave = extraFeeDTOExtraFeeTypeConverter.convert(extraFeeDTO);
 
         final ExtraFee savedExtraFee = extraFeeRepository.saveAndFlush(extraFeeToSave);

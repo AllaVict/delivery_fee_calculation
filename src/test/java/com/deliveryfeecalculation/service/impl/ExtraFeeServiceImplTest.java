@@ -2,8 +2,8 @@ package com.deliveryfeecalculation.service.impl;
 
 import com.deliveryfeecalculation.converter.TypeConverter;
 import com.deliveryfeecalculation.domain.dto.ExtraFeeDTO;
-import com.deliveryfeecalculation.domain.enums.Status;
 import com.deliveryfeecalculation.domain.model.ExtraFee;
+import com.deliveryfeecalculation.exception.FeeCreationException;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.repository.ExtraFeeRepository;
 import org.assertj.core.api.Assertions;
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.deliveryfeecalculation.domain.enums.Status.ARCHIVE;
+import static com.deliveryfeecalculation.domain.enums.Status.CURRENT;
 import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,7 +79,7 @@ class ExtraFeeServiceImplTest {
         }
 
         @Test
-        void testFindExtraFeeById_shouldThrowException() {
+        void testFindExtraFeeById_ShouldThrowException() {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.findExtraFeeById(EXTRA_FEE_ID));
@@ -90,7 +92,7 @@ class ExtraFeeServiceImplTest {
     class FindAllExtraFeesTests {
 
         @Test
-        void testFindAllExtraFees_shouldReturnAllExtraFees() {
+        void testFindAllExtraFees_ShouldReturnAllExtraFees() {
             when(extraFeeRepository.findAll()).thenReturn(extraFeeList);
             when(extraFeeExtraFeeDTOTypeConverter.convert(extraFeeList)).thenReturn(extraFeeDTOList);
 
@@ -101,7 +103,7 @@ class ExtraFeeServiceImplTest {
         }
 
         @Test
-        void testFindAllExtraFees_shouldThrowException() {
+        void testFindAllExtraFees_ShouldReturnEmptyList() {
             extraFeeRepository.deleteAll();
             extraFeeDTOList = new ArrayList<>();
             extraFeeList = new ArrayList<>();
@@ -112,7 +114,7 @@ class ExtraFeeServiceImplTest {
             verify(extraFeeRepository).findAll();
             assertNotNull(result);
             assertEquals(result, extraFeeDTOList);
-            Assertions.assertThat(result.size()).isEqualTo(extraFeeDTOList.size());
+            assertTrue(result.isEmpty());
 
         }
 
@@ -131,14 +133,15 @@ class ExtraFeeServiceImplTest {
 
             assertEquals(extraFeeDTO, result);
             assertThat(result.getName()).isEqualTo(extraFeeDTO.getName());
+            assertThat(result.getStatus()).isEqualTo(CURRENT);
             verify(extraFeeRepository).saveAndFlush(any(ExtraFee.class));
             assertNotNull(result);
         }
 
         @Test
-        void testCreateExtraFee_shouldThrowException() {
+        void testCreateExtraFee_ShouldThrowException() {
             extraFeeDTO = null;
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(FeeCreationException.class,
                     () -> extraFeeService.createExtraFee(extraFeeDTO));
         }
     }
@@ -147,23 +150,23 @@ class ExtraFeeServiceImplTest {
     @DisplayName("When archive a ExtraFee")
     class ArchiveExtraFeeTests {
         @Test
-        void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() {
+        void testArchiveExtraFee_ShouldReturnExtraFeeWithArchiveStatus() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.ofNullable(extraFee));
-            archiveExtraFeeDTO.setStatus(Status.ARCHIVE);
+            archiveExtraFeeDTO.setStatus(ARCHIVE);
             when(extraFeeRepository.saveAndFlush(extraFee)).thenReturn(extraFee);
             when(extraFeeExtraFeeDTOTypeConverter.convert(extraFee)).thenReturn(archiveExtraFeeDTO);
 
             ExtraFeeDTO result = extraFeeService.archiveExtraFee(EXTRA_FEE_ID);
 
             assertEquals(archiveExtraFeeDTO, result);
-            assertThat(result.getName()).isEqualTo(extraFeeDTO.getName());
+            assertThat(result.getStatus()).isEqualTo(ARCHIVE);
             assertNotNull(result);
             verify(extraFeeRepository).saveAndFlush(any(ExtraFee.class));
 
         }
 
         @Test
-        void testArchiveExtraFee_shouldThrowException() {
+        void testArchiveExtraFee_ShouldThrowException() {
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.archiveExtraFee(EXTRA_FEE_ID));
 
@@ -175,7 +178,7 @@ class ExtraFeeServiceImplTest {
     @DisplayName("When Delete a ExtraFee")
     class DeleteExtraFeeTests {
         @Test
-        void testDeleteExtraFee_shouldReturnExtraFee() {
+        void testDeleteExtraFee_ShouldReturnExtraFee() {
             when(extraFeeRepository.findById(EXTRA_FEE_ID)).thenReturn(Optional.of(extraFee));
             extraFeeService.deleteExtraFeeById(EXTRA_FEE_ID);
             verify(extraFeeRepository, times(1)).delete(extraFee);
@@ -183,7 +186,7 @@ class ExtraFeeServiceImplTest {
         }
 
         @Test
-        void testDeleteExtraFee_shouldThrowException() {
+        void testDeleteExtraFee_ShouldThrowException() {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> extraFeeService.deleteExtraFeeById(EXTRA_FEE_ID));

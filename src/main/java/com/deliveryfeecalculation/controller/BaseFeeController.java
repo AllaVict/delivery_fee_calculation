@@ -1,7 +1,11 @@
 package com.deliveryfeecalculation.controller;
 
 import com.deliveryfeecalculation.domain.dto.BaseFeeDTO;
+import com.deliveryfeecalculation.exception.FeeCreationException;
+import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.service.BaseFeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import static com.deliveryfeecalculation.constants.Constants.Endpoints.BASE_FEE_
  */
 @RestController
 @RequestMapping(BASE_FEE_URL)
+@Tag(name = "BaseFee Controller", description = "BaseFee Controller API")
 public class BaseFeeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseFeeController.class);
@@ -30,7 +35,6 @@ public class BaseFeeController {
         this.baseFeeService = baseFeeService;
     }
 
-
     /**
      * Creates a new BaseFee entity based on the provided BaseFeeDTO.
      *
@@ -38,17 +42,32 @@ public class BaseFeeController {
      * @return A {@link ResponseEntity} containing the created BaseFee entity or a bad request error.
      */
     @PostMapping()
+    @Operation(summary = "Create a BaseFee with a given request body")
     public ResponseEntity<?> createBaseFee(@RequestBody final BaseFeeDTO baseFeeDTO) {
 
-        if (baseFeeDTO == null || baseFeeDTO.getCity() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please fill all fields");
+        try {
 
-        final BaseFeeDTO savedBaseFee = baseFeeService.createBaseFee(baseFeeDTO);
+            if (baseFeeDTO == null || baseFeeDTO.getCity() == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please fill all fields");
 
-        LOGGER.debug("In createBaseFee received POST BaseFee save successfully with id {} ", savedBaseFee);
+            final BaseFeeDTO savedBaseFee = baseFeeService.createBaseFee(baseFeeDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBaseFee);
-    }
+            LOGGER.debug("In createBaseFee received POST BaseFee save successfully with id {} ", savedBaseFee);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedBaseFee);
+
+        } catch (FeeCreationException exception) {
+
+            LOGGER.error("Error during a BaseFee creation: {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+
+        } catch (Exception exception) {
+
+            LOGGER.error("Unexpected error during a BaseFee creation: {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+
+       }
+}
 
     /**
      * Archives an existing BaseFee entity by its ID.
@@ -58,14 +77,28 @@ public class BaseFeeController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> archiveBaseFee(@PathVariable("id") final Long baseFeeId) {
-        if (baseFeeId == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert BaseFee id");
 
-        final BaseFeeDTO archivedBaseFeeDto = baseFeeService.archiveBaseFee(baseFeeId);
+        try {
+            if (baseFeeId == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert BaseFee Id");
 
-        LOGGER.debug("In archiveBaseFee received PUT BaseFee archive successfully with id {} ", baseFeeId);
+            final BaseFeeDTO archivedBaseFeeDto = baseFeeService.archiveBaseFee(baseFeeId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(archivedBaseFeeDto);
+            LOGGER.debug("In archiveBaseFee received PUT BaseFee archive successfully with id {} ", baseFeeId);
+
+            return ResponseEntity.status(HttpStatus.OK).body(archivedBaseFeeDto);
+
+        } catch (ResourceNotFoundException exception) {
+
+            LOGGER.error("BaseFee not found with id : '{}'", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+
+        } catch (Exception exception) {
+
+            LOGGER.error("Unexpected error during archiving the BaseFee with id {}", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+
+        }
     }
 
     /**
@@ -75,13 +108,30 @@ public class BaseFeeController {
      * @return A {@link ResponseEntity} containing the found BaseFee entity or a not found error.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Find a BaseFee by id")
     public ResponseEntity<?> findBaseFeeById(@PathVariable("id") final Long baseFeeId) {
 
-        final BaseFeeDTO foundBaseFeeDto = baseFeeService.findBaseFeeById(baseFeeId);
+        try {
+            if (baseFeeId == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert BaseFee Id");
 
-        LOGGER.debug("In findBaseFeeById received GET BaseFee find successfully with id {} ", baseFeeId);
+            final BaseFeeDTO foundBaseFeeDto = baseFeeService.findBaseFeeById(baseFeeId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(foundBaseFeeDto);
+            LOGGER.debug("In findBaseFeeById received GET BaseFee find successfully with id {} ", baseFeeId);
+
+            return ResponseEntity.status(HttpStatus.OK).body(foundBaseFeeDto);
+
+        } catch (ResourceNotFoundException exception) {
+
+            LOGGER.error("BaseFee not found with id : '{}'", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+
+        } catch (Exception exception) {
+
+            LOGGER.error("Unexpected error during finding the BaseFee with id {}", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+
+        }
     }
 
     /**
@@ -90,16 +140,23 @@ public class BaseFeeController {
      * @return A {@link ResponseEntity} containing a list of all BaseFee entities or a not found error if the list is empty.
      */
     @GetMapping()
+    @Operation(summary = "Find all BaseFees")
     public ResponseEntity<?> findAllBaseFees() {
+        try {
 
-        final List<BaseFeeDTO> baseFeeDTOList = baseFeeService.findAllBaseFees();
-        if (baseFeeDTOList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Empty list");
+            final List<BaseFeeDTO> baseFeeDTOList = baseFeeService.findAllBaseFees();
+
+            LOGGER.debug("In findAllBaseFees received GET get all BaseFees successfully {} ", baseFeeDTOList);
+
+            return ResponseEntity.status(HttpStatus.OK).body(baseFeeDTOList);
+
+        } catch (Exception exception) {
+
+            LOGGER.error("Error finding all BaseFees : {} ", exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+
         }
 
-        LOGGER.debug("In findAllBaseFees received GET get all BaseFees successfully {} ", baseFeeDTOList);
-
-        return ResponseEntity.status(HttpStatus.OK).body(baseFeeDTOList);
     }
 
     /**
@@ -109,13 +166,29 @@ public class BaseFeeController {
      * @return A {@link ResponseEntity} confirming the deletion or a bad request error if the ID is null.
      */
     @DeleteMapping("/{Id}")
+    @Operation(summary = "Delete a BaseFee by id")
     public ResponseEntity<?> deleteBaseFeeById(@PathVariable("Id") Long baseFeeId) {
+        try {
+            if (baseFeeId == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please insert baseFeeId");
 
-        baseFeeService.deleteBaseFeeById(baseFeeId);
+            baseFeeService.deleteBaseFeeById(baseFeeId);
 
-        LOGGER.debug("In deleteBaseFeeById received DELETE BaseFee delete successfully with id {} ", baseFeeId);
+            LOGGER.debug("In deleteBaseFeeById received DELETE BaseFee delete successfully with id {} ", baseFeeId);
 
-        return ResponseEntity.status(HttpStatus.OK).body("The BaseFee has deleted successfully");
+            return ResponseEntity.status(HttpStatus.OK).body("The BaseFee has deleted successfully");
+
+        } catch (ResourceNotFoundException exception) {
+
+            LOGGER.error("BaseFee not found with id : '{}'", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+
+        } catch (Exception exception) {
+
+            LOGGER.error("Unexpected error during deleting the BaseFee with id {}", baseFeeId, exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+
+        }
     }
 
 }

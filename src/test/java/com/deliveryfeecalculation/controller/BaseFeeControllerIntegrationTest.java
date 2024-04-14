@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -68,65 +69,6 @@ class BaseFeeControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("When Find BaseFee By Id")
-    class FindBaseByIdTests {
-        @Test
-        void testFindBaseFeeById_ShouldReturnBaseFee() throws Exception {
-            given(baseFeeService.findBaseFeeById(BASE_FEE_ID)).willReturn(baseFeeDTO);
-
-            mockMvc.perform(get(BASE_FEE_URL + "/" + BASE_FEE_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        void testFindBaseFeeById_ShouldNoBaseFeeFound() throws Exception {
-            baseFeeDTO = null;
-            given(baseFeeService.findBaseFeeById(BASE_FEE_ID)).willThrow(
-                    new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
-
-            mockMvc.perform(get(BASE_FEE_URL + "/" + BASE_FEE_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
-                    .andDo(print())
-                    .andExpect(status().isNotFound());
-        }
-
-    }
-
-    @Nested
-    @DisplayName("When Find All BaseFees")
-    class FindAllBaseFeesTests {
-
-        @Test
-        void testFindAllBaseFees_shouldReturnAllBaseFees() throws Exception {
-            given(baseFeeService.findAllBaseFees()).willReturn(baseFeeDTOList);
-
-            mockMvc.perform(get(BASE_FEE_URL)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(baseFeeDTOList)))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-
-        }
-
-        @Test
-        void testFindAllBaseFees_shouldThrowException() throws Exception {
-            baseFeeDTOList = new ArrayList<>();
-            given(baseFeeService.findAllBaseFees()).willReturn(baseFeeDTOList);
-
-            mockMvc.perform(get(BASE_FEE_URL)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(baseFeeDTOList)))
-                    .andDo(print())
-                    .andExpect(status().isNotFound());
-
-        }
-    }
-
-    @Nested
     @DisplayName("When Create a BaseFee")
     class CreateBaseFeeTests {
         @Test
@@ -143,14 +85,25 @@ class BaseFeeControllerIntegrationTest {
         }
 
         @Test
-        void testCreateBaseFee_InvalidData() throws Exception {
+        void testCreateBaseFee_ShouldReturn400Status_WhenBaseFeeDtoIsNull() throws Exception {
             baseFeeDTO = null;
             mockMvc.perform(post(BASE_FEE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(baseFeeDTO)))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result -> result.getResponse().getContentAsString().equals("Please fill all fields"));
 
+        }
+
+        @Test
+        void testCreateBaseFee_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+
+            mockMvc.perform(post(BASE_FEE_URL + "/invalid")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError());
         }
 
     }
@@ -159,7 +112,7 @@ class BaseFeeControllerIntegrationTest {
     @DisplayName("When archive a BaseFee")
     class ArchiveBaseFeeTests {
         @Test
-        void testArchiveBaseFee_shouldReturnExtraFeeWithArchiveStatus() throws Exception {
+        void testArchiveBaseFee_ShouldReturnBaseFeeWithArchiveStatus() throws Exception {
             given(baseFeeService.archiveBaseFee(BASE_FEE_ID)).willReturn(baseFeeDTO);
 
             mockMvc.perform(put(BASE_FEE_URL + "/" + BASE_FEE_ID)
@@ -171,7 +124,7 @@ class BaseFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveBaseFee_NonExistentId() throws Exception {
+        void testArchiveBaseFee_ShouldReturn404Status_WhenNonExistentId() throws Exception {
             Long nonExistentId = 999L;
             given(baseFeeService.archiveBaseFee(nonExistentId)).willThrow(
                     new ResourceNotFoundException("BaseFee not found for id: " + nonExistentId));
@@ -184,7 +137,7 @@ class BaseFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveBaseFee_InvalidData() throws Exception {
+        void testArchiveBaseFee_ShouldReturn404Status_WhenInvalidData() throws Exception {
             given(baseFeeService.findBaseFeeById(null)).willThrow(
                     new ResourceNotFoundException("BaseFee not found for id: " + null));
 
@@ -196,7 +149,7 @@ class BaseFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveBaseFee_MissingIdInUrl() throws Exception {
+        void testArchiveBaseFee_ShouldReturn405Status_WhenMissingIdInUrl() throws Exception {
             mockMvc.perform(put(BASE_FEE_URL + "/")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -206,10 +159,92 @@ class BaseFeeControllerIntegrationTest {
     }
 
     @Nested
+    @DisplayName("When Find BaseFee By Id")
+    class FindBaseByIdTests {
+        @Test
+        void testFindBaseFeeById_ShouldReturnBaseFee() throws Exception {
+            given(baseFeeService.findBaseFeeById(BASE_FEE_ID)).willReturn(baseFeeDTO);
+
+            mockMvc.perform(get(BASE_FEE_URL + "/" + BASE_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        void testFindBaseFeeById_ShouldReturn404Status_WhenNoBaseFeeFound() throws Exception {
+            baseFeeDTO = null;
+            given(baseFeeService.findBaseFeeById(BASE_FEE_ID)).willThrow(
+                    new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
+
+            mockMvc.perform(get(BASE_FEE_URL + "/" + BASE_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void testFindBaseFeeById_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+            baseFeeDTO = null;
+            given(baseFeeService.findBaseFeeById(BASE_FEE_ID)).willThrow(
+                    new ResourceNotFoundException("BaseFee not found for id: " + BASE_FEE_ID));
+
+            mockMvc.perform(get(BASE_FEE_URL + "/" + BASE_FEE_ID + "/invalid")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("When Find All BaseFees")
+    class FindAllBaseFeesTests {
+
+        @Test
+        void testFindAllBaseFees_ShouldReturnAllBaseFees() throws Exception {
+            given(baseFeeService.findAllBaseFees()).willReturn(baseFeeDTOList);
+
+            mockMvc.perform(get(BASE_FEE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTOList)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        void testFindAllBaseFees_ShouldReturn200Status_WhenReturnEmptyList() throws Exception {
+            baseFeeDTOList = new ArrayList<>();
+            given(baseFeeService.findAllBaseFees()).willReturn(baseFeeDTOList);
+
+            mockMvc.perform(get(BASE_FEE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTOList)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        void testFindAllBaseFees_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+
+            mockMvc.perform(get("/invalid")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(baseFeeDTOList)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
     @DisplayName("When Delete a BaseFee")
     class DeleteBaseFeeTests {
         @Test
-        void testDeleteBaseFee_shouldReturnExtraFee() throws Exception {
+        void testDeleteBaseFee_ShouldReturnBaseFee() throws Exception {
             doNothing().when(baseFeeService).deleteBaseFeeById(any(Long.class));
 
             mockMvc.perform(delete(BASE_FEE_URL + "/" + BASE_FEE_ID)
@@ -222,7 +257,19 @@ class BaseFeeControllerIntegrationTest {
         }
 
         @Test
-        void testDeleteBaseFee_statusCode404WhenInvalidRequested() throws Exception {
+        void testDeleteBaseFee_ShouldnReturn404Status_WhenBaseFeeDoesNotExist() throws Exception {
+            doThrow(new ResourceNotFoundException("BaseFee not found for id: " + null))
+                    .when(baseFeeService).deleteBaseFeeById(any(Long.class));
+
+            mockMvc.perform(delete(BASE_FEE_URL + "/" + BASE_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+
+        @Test
+        void testDeleteBaseFee_ShouldnReturn400Status_WhenInvalidRequested() throws Exception {
             mockMvc.perform(delete("/invalid")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(baseFee)))
