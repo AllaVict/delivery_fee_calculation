@@ -9,6 +9,6 @@ VALUES ('TALLINN', 30, 25, 'RAIN', now()),
 
 INSERT INTO base_fees
 (city, vehicle_type, base_fee, status, created_date)
-VALUES ('PÄRNU', 'CAR',3.90, 'CURRENT', now()),
-       ('PÄRNU', 'SCOOTER', 3.40, 'CURRENT', now()),
-       ('PÄRNU', 'BIKE', 2.90, 'CURRENT', now());
+VALUES ('PARNU', 'CAR',3.90, 'CURRENT', now()),
+       ('PARNU', 'SCOOTER', 3.40, 'CURRENT', now()),
+       ('PARNU', 'BIKE', 2.90, 'CURRENT', now());
