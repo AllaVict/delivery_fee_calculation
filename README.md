@@ -1,4 +1,4 @@
-# delivery_fee_calculation
+# Delivery fee calculation
 # Core functionalities.
 This web application is a RESTful API that allows calculating the delivery fee for food couriers according to input parameters from REST interface requests, weather data from the database, and business rules. This application periodically imports weather data, which is in XML format, from the weather portal of the Estonian Environment Agency and saves it in the database.
 (https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php).
