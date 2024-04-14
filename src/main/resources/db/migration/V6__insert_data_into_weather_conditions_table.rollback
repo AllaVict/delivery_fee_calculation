@@ -1,0 +1,1 @@
+DELETE FROM weather_conditions WHERE station_name IN ('TALLINN');
