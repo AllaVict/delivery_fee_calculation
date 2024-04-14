@@ -6,6 +6,8 @@ import com.deliveryfeecalculation.domain.model.Request;
 import com.deliveryfeecalculation.domain.model.Response;
 import com.deliveryfeecalculation.exception.ResourceNotFoundException;
 import com.deliveryfeecalculation.service.DeliveryFeeCalculationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import static com.deliveryfeecalculation.constants.Constants.Endpoints.FEE_URL;
  */
 @RequestMapping(FEE_URL)
 @RestController
+@Tag(name = "DeliveryFee Calculation Controller", description = "DeliveryFee Calculation API")
 public class DeliveryFeeCalculationController {
 
     private final DeliveryFeeCalculationService deliveryFeeCalculationService;
@@ -48,6 +51,7 @@ public class DeliveryFeeCalculationController {
      * fee in a {@link Response} object wrapped in a ResponseEntity with an HTTP status of OK.
      */
     @GetMapping()
+    @Operation(summary = "Calculate an DeliveryFee by given a city and a vehicle type")
     public ResponseEntity<?> getDeliveryFee(@RequestBody final Request request) {
         try {
             if (request == null || request.getCity() == null || request.getVehicleType() == null)

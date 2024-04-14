@@ -26,12 +26,11 @@ import static com.deliveryfeecalculation.factory.ExtraFeeFactory.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ExtraFeeController.class)
@@ -67,65 +66,6 @@ class ExtraFeeControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("When Find ExtraFee By Id")
-    class FindAdvertByIdTests {
-        @Test
-        void testFindExtraFeeById_ShouldReturnExtraFee() throws Exception {
-            given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willReturn(extraFeeDTO);
-
-            mockMvc.perform(get(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        void testFindExtraFeeById_ShouldNoExtraFeeFound() throws Exception {
-            extraFeeDTO = null;
-            given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willThrow(
-                    new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
-
-            mockMvc.perform(get(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
-                    .andDo(print())
-                    .andExpect(status().isNotFound());
-        }
-
-    }
-
-    @Nested
-    @DisplayName("When Find All ExtraFees")
-    class FindAllAdvertsTests {
-
-        @Test
-        void testFindAllExtraFees_shouldReturnAllExtraFees() throws Exception {
-            given(extraFeeService.findAllExtraFees()).willReturn(extraFeeDTOList);
-
-            mockMvc.perform(get(EXTRA_FEE_URL)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(extraFeeDTOList)))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-
-        }
-
-        @Test
-        void testFindAllExtraFees_shouldThrowException() throws Exception {
-            extraFeeDTOList = new ArrayList<>();
-            given(extraFeeService.findAllExtraFees()).willReturn(extraFeeDTOList);
-
-            mockMvc.perform(get(EXTRA_FEE_URL)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(extraFeeDTOList)))
-                    .andDo(print())
-                    .andExpect(status().isNotFound());
-
-        }
-    }
-
-    @Nested
     @DisplayName("When Create a ExtraFee")
     class CreateExtraFeeTests {
         @Test
@@ -142,23 +82,34 @@ class ExtraFeeControllerIntegrationTest {
         }
 
         @Test
-        void testCreateExtraFee_InvalidData() throws Exception {
+        void testCreateExtraFee_ShouldReturn400Status_WhenExtraFeeDtoIsNull() throws Exception {
             extraFeeDTO = null;
             mockMvc.perform(post(EXTRA_FEE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(extraFeeDTO)))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result -> result.getResponse().getContentAsString().equals("Please fill all fields"));
 
+        }
+
+        @Test
+        void testCreateExtraFee_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+
+            mockMvc.perform(post(EXTRA_FEE_URL + "/invalid")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError());
         }
 
     }
 
     @Nested
     @DisplayName("When archive a ExtraFee")
-    class EditAdvertTests {
+    class ArchiveExtraFeeTests {
         @Test
-        void testArchiveExtraFee_shouldReturnExtraFeeWithArchiveStatus() throws Exception {
+        void testArchiveExtraFee_ShouldReturnExtraFeeWithArchiveStatus() throws Exception {
             given(extraFeeService.archiveExtraFee(EXTRA_FEE_ID)).willReturn(extraFeeDTO);
 
             mockMvc.perform(put(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
@@ -170,7 +121,7 @@ class ExtraFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveExtraFee_NonExistentId() throws Exception {
+        void testArchiveExtraFee_ShouldReturn404Status_WhenNonExistentId() throws Exception {
             Long nonExistentId = 999L;
             given(extraFeeService.archiveExtraFee(nonExistentId)).willThrow(
                     new ResourceNotFoundException("ExtraFee not found for id: " + nonExistentId));
@@ -183,7 +134,7 @@ class ExtraFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveExtraFee_InvalidData() throws Exception {
+        void testArchiveExtraFee_ShouldReturn404Status_WhenInvalidData() throws Exception {
             given(extraFeeService.findExtraFeeById(null)).willThrow(
                     new ResourceNotFoundException("ExtraFee not found for id: " + null));
 
@@ -195,7 +146,7 @@ class ExtraFeeControllerIntegrationTest {
         }
 
         @Test
-        void testArchiveExtraFee_MissingIdInUrl() throws Exception {
+        void testArchiveExtraFee_ShouldReturn405Status_WhenMissingIdInUrl() throws Exception {
             mockMvc.perform(put(EXTRA_FEE_URL + "/")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -205,10 +156,91 @@ class ExtraFeeControllerIntegrationTest {
     }
 
     @Nested
+    @DisplayName("When Find ExtraFee By Id")
+    class FindExtraFeeByIdTests {
+        @Test
+        void testFindExtraFeeById_ShouldReturnExtraFee() throws Exception {
+            given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willReturn(extraFeeDTO);
+
+            mockMvc.perform(get(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        void testFindExtraFeeById_ShouldReturn404Status_WhenNoExtraFeeFound() throws Exception {
+            extraFeeDTO = null;
+            given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willThrow(
+                    new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
+
+            mockMvc.perform(get(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void testFindExtraFeeById_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+            extraFeeDTO = null;
+            given(extraFeeService.findExtraFeeById(EXTRA_FEE_ID)).willThrow(
+                    new ResourceNotFoundException("ExtraFee not found for id: " + EXTRA_FEE_ID));
+
+            mockMvc.perform(get(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID + "/invalid")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTO)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("When Find All ExtraFees")
+    class FindAllExtraFeesTests {
+
+        @Test
+        void testFindAllExtraFees_ShouldReturnAllExtraFees() throws Exception {
+            given(extraFeeService.findAllExtraFees()).willReturn(extraFeeDTOList);
+
+            mockMvc.perform(get(EXTRA_FEE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTOList)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        void testFindAllExtraFees_ShouldReturn200Status_WhenReturnEmptyList() throws Exception {
+            extraFeeDTOList = new ArrayList<>();
+            given(extraFeeService.findAllExtraFees()).willReturn(extraFeeDTOList);
+
+            mockMvc.perform(get(EXTRA_FEE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(extraFeeDTOList)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        void testFindAllExtraFees_ShouldReturn404Status_WhenInvalidRequested() throws Exception {
+
+            mockMvc.perform(get("/invalid")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
     @DisplayName("When Delete a ExtraFee")
     class DeleteExtraFeeTests {
         @Test
-        void testDeleteExtraFee_shouldReturnExtraFee() throws Exception {
+        void testDeleteExtraFee_ShouldReturnExtraFee() throws Exception {
             doNothing().when(extraFeeService).deleteExtraFeeById(any(Long.class));
 
             mockMvc.perform(delete(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
@@ -221,7 +253,18 @@ class ExtraFeeControllerIntegrationTest {
         }
 
         @Test
-        void testDeleteExtraFee_statusCode404WhenInvalidRequested() throws Exception {
+        void testDeleteExtraFee_ShouldnReturn404Status_WhenExtraFeeDoesNotExist() throws Exception {
+            doThrow(new ResourceNotFoundException("ExtraFee not found for id: " + null))
+                    .when(extraFeeService).deleteExtraFeeById(any(Long.class));
+
+            mockMvc.perform(delete(EXTRA_FEE_URL + "/" + EXTRA_FEE_ID)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void testDeleteExtraFee_ShouldnReturn404Status_WhenInvalidRequested() throws Exception {
             mockMvc.perform(delete("/invalid")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(extraFee)))

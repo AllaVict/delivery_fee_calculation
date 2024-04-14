@@ -35,7 +35,6 @@ class ExtraFeeToExtraFeeDtoConverterTest {
     @Test
     void testConvert_shouldConvertExtraFeeToExtraFeeDto() {
         ExtraFeeDTO result = converter.convert(extraFee);
-        System.out.println("extraFee: " + extraFee);
 
         assertNotNull(result);
         assertEquals(extraFee.getName(), result.getName());
