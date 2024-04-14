@@ -12,3 +12,8 @@ INSERT INTO base_fees
 VALUES ('PARNU', 'CAR',3.90, 'CURRENT', now()),
        ('PARNU', 'SCOOTER', 3.40, 'CURRENT', now()),
        ('PARNU', 'BIKE', 2.90, 'CURRENT', now());
+INSERT INTO base_fees
+(city, vehicle_type, base_fee, status, created_date)
+VALUES ('TARTU', 'CAR',3.95, 'CURRENT', now()),
+       ('TARTU', 'SCOOTER', 3.45, 'CURRENT', now()),
+       ('TARTU', 'BIKE', 2.95, 'CURRENT', now());
